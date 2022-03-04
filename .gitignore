@@ -130,3 +130,10 @@ dmypy.json
 
 # Jetbrains stuff
 .idea
+
+# Databases
+backend/*.db
+backend/*.backupdb
+
+# Package-lock
+frontend/package-lock.json

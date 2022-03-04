@@ -21,15 +21,17 @@ elif [ "$1" == "install" ]; then
   deactivate
 elif [ "$1" == "start" ]; then
   source venv/bin/activate
-  # Set up variable from .env file
+  # Set up variables from .env file
   export $(grep -v '^#' .env | xargs -d '\n')
   python3 app.py
   deactivate
 elif [ "$1" == "test" ]; then
   source venv/bin/activate
   touch test_output.txt
-  # Set up variable from .env file
+  # Set up variables from .env file
   export $(grep -v '^#' .env | xargs -d '\n')
+  # Start local amazon DynamoDB docker image
+  docker-compose up
   pytest . >> test_output.txt
   deactivate
 elif [ "$1" == "clean" ]; then
