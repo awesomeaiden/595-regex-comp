@@ -1,0 +1,159 @@
+---
+openapi: 3.0.2
+info:
+  title: 595ASE
+  version: 1.0.0
+  description: API for 595 ASE experimental tool
+paths:
+  /:
+    summary: Connection check
+    get:
+      responses:
+        "200":
+          content:
+            application/json: {}
+          description: Connection OK
+      operationId: helloWorld
+      summary: Hello world
+  /log:
+    summary: To log datapoints
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataLog'
+        required: true
+      responses:
+        "200":
+          description: Datapoint received
+        "400":
+          content:
+            application/json:
+              schema:
+                type: string
+              examples:
+                Bad Request:
+                  value: Datapoint malformed!
+          description: Datapoint malformed
+        "500":
+          description: Internal server error
+      operationId: logData
+      summary: Receive logged datapoint from frontend
+components:
+  schemas:
+    DataLog:
+      title: Root Type for Datapoint
+      description: A data log from the frontend
+      required:
+      - timestamp
+      type: object
+      properties:
+        participantID:
+          description: Randomly generated unique ID for study participant
+          type: string
+        payload:
+          $ref: '#/components/schemas/Payload'
+          description: Contains captured data
+          properties:
+            context:
+              type: string
+            data:
+              type: object
+              properties:
+                familiarity:
+                  format: double
+                  type: number
+                experience:
+                  format: double
+                  type: number
+                skill:
+                  format: double
+                  type: number
+        timestamp:
+          description: Timestamp of data log
+          type: string
+      example:
+        participantID: some text
+        payload:
+          context: some text
+          datapoint: {}
+        timestamp: some text
+    DatapointStartup:
+      description: Data from experiment startup
+      required:
+      - familiarity
+      - experience
+      - skill
+      type: object
+      properties:
+        familiarity:
+          description: Value 0-1 representing participant's familiarity with Regexes
+          type: number
+        experience:
+          description: Value 0-1 representing participant's experience with Regexes
+          type: number
+        skill:
+          description: Value 0-1 representing participant's skill with Regexes
+          type: number
+      example:
+        familiarity: 0.6
+        experience: 0.3
+        skill: 0.4
+    DatapointChallenge:
+      description: Data collected from one of the "challenge" stages of the experiment.
+      required:
+      - timeToComplete
+      - numAttempts
+      - numChecks
+      type: object
+      properties:
+        timeToComplete:
+          description: Time taken to complete the challenge overall (in milliseconds)
+          type: integer
+        numAttempts:
+          description: Number of answer submission attempts
+          type: integer
+        numChecks:
+          description: Number of times participant utilized the comprehension method
+            to check their answer
+          type: integer
+      example:
+        timeToComplete: 21000
+        numAttempts: 27
+        numChecks: 40
+    Payload:
+      description: 'Contains captured experimental data '
+      required:
+      - context
+      - datapoint
+      type: object
+      properties:
+        context:
+          description: |
+            Context data is from.  Used to identify which part of the experiment the data is from and how to parse it properly on the backend.
+
+            Possible values include:
+                "startup",
+                "control1",
+                "control2",
+                "explain1",
+                "explain2",
+                "automata1",
+                "automata2",
+                "code1",
+                "code2",
+                "conclusion"
+          type: string
+        datapoint:
+          $ref: '#/components/schemas/Datapoint'
+          description: Results from this stage of the experiment
+      example:
+        context: some text
+        datapoint: {}
+    Datapoint:
+      oneOf:
+      - $ref: '#/components/schemas/DatapointChallenge'
+      - $ref: '#/components/schemas/DatapointStartup'
+      description: A datapoint
+      type: object

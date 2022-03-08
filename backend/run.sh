@@ -24,7 +24,7 @@ elif [ "$1" == "start" ]; then
   source venv/bin/activate
   # Set up variables from .env file
   export $(grep -v '^#' .env | xargs -d '\n')
-  python -m regex_server.app
+  python -m regex_server.app localhost 8000
   deactivate
 elif [ "$1" == "test" ]; then
   source venv/bin/activate

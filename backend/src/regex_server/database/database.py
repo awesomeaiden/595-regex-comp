@@ -10,7 +10,7 @@ def backup_progress(status, remaining, total):
 class Database:
     def __init__(self):
         # Connect to local database
-        self.db = sqlite3.connect(os.environ["SQLITE_DB_FILE_NAME"])
+        self.db = sqlite3.connect(os.environ["SQLITE_DB_FILE_NAME"], check_same_thread=False)
         self.cur = self.db.cursor()
 
         # Set up tables if they do not exist
