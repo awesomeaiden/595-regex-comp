@@ -109,7 +109,10 @@ class Database:
 
     # Backup database
     def backup(self):
-        bck = sqlite3.connect('bck_' + str(datetime.timestamp(datetime.now())) + ".backupdb")
+        backup_name = 'bck_' + str(datetime.timestamp(datetime.now())) + ".backupdb"
+        bck = sqlite3.connect(backup_name)
         with bck:
             self.db.backup(bck, progress=backup_progress)
         bck.close()
+        # Move backup file to back up directory
+        os.rename("backup_name", "backups/" + backup_name)
