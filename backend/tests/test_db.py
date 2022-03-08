@@ -1,5 +1,12 @@
-from .. import db
+from __future__ import absolute_import
+from regex_server.database import database
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+test_database_name = "test_database.db"
 
 # Test data
 part_1 = {
@@ -49,7 +56,13 @@ chal_3 = {
 
 
 def setup_database():
-    return db.Database()
+    # Set test environment variable
+    os.environ["SQLITE_DB_FILE_NAME"] = test_database_name
+    # Delete existing test db if there
+    if os.path.exists(test_database_name):
+        os.remove(test_database_name)
+    # Recreate test db
+    return database.Database()
 
 
 def insert_data(database):
@@ -79,16 +92,12 @@ def test_database():
     assert(len(database.query("SELECT name FROM sqlite_master WHERE type='table' AND name='participants';")) > 0)
     assert(len(database.query("SELECT name FROM sqlite_master WHERE type='table' AND name='chalDatapoints';")) > 0)
     assert(len(database.query("SELECT name FROM sqlite_master WHERE type='table' AND name='startupDatapoints';")) > 0)
-    assert(len(database.query("SELECT name FROM sqlite_master WHERE type='table' AND name='datalogChalDatapoints';")) > 0)
-    assert(len(database.query("SELECT name FROM sqlite_master WHERE type='table' AND name='datalogStartupDatapoints';")) > 0)
 
     # Test inserts
     insert_data(database)
     assert(len(database.query("SELECT * FROM participants")) == 2)
     assert(len(database.query("SELECT * FROM startupDatapoints")) == 2)
     assert(len(database.query("SELECT * FROM chalDatapoints")) == 6)
-    assert(len(database.query("SELECT * FROM datalogStartupDatapoints")) == 2)
-    assert(len(database.query("SELECT * FROM datalogChalDatapoints")) == 6)
 
     # Test backup and close
     database.shutdown()

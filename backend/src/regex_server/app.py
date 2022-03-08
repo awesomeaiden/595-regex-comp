@@ -18,7 +18,7 @@ def hello_world():
 def generate_regex_visualization_method1():
     regex_str = request.args['str']
     base64arr = None
-    with open("test_img.png", 'rb') as f:
+    with open("../test_img.png", 'rb') as f:
         byte_arr = f.read()
         base64arr = base64.standard_b64encode(byte_arr)
     return base64arr

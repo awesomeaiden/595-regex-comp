@@ -132,8 +132,11 @@ dmypy.json
 .idea
 
 # Databases
-backend/*.db
-backend/*.backupdb
+*.db
+*.backupdb
+
+# Test output
+backend/test_output.txt
 
 # Package-lock
 frontend/package-lock.json
