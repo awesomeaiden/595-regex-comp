@@ -35,6 +35,7 @@ start_2 = {
 
 chal_1 = {
     "created": datetime.now(),
+    "context": "equivalent code",
     "num_attempts": 12,
     "num_checks": 28,
     "time_to_complete": 90000
@@ -42,6 +43,7 @@ chal_1 = {
 
 chal_2 = {
     "created": datetime.now(),
+    "context": "explanation",
     "num_attempts": 16,
     "num_checks": 20,
     "time_to_complete": 70000
@@ -49,6 +51,7 @@ chal_2 = {
 
 chal_3 = {
     "created": datetime.now(),
+    "context": "visualization",
     "num_attempts": 4,
     "num_checks": 7,
     "time_to_complete": 80000

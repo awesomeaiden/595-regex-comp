@@ -30,6 +30,7 @@ class Database:
             (
                 pID text,
                 created text,
+                context text,
                 numAttempts integer,
                 numChecks integer,
                 timeToComplete integer
@@ -56,8 +57,8 @@ class Database:
 
     def insert_chal(self, p_id, chal_dp):
         self.insert(f"""
-            INSERT INTO chalDatapoints (pID, created, numAttempts, numChecks, timeToComplete) 
-            VALUES ("{p_id}", "{chal_dp["created"]}", {chal_dp["num_attempts"]}, {chal_dp["num_checks"]}, {chal_dp["time_to_complete"]})
+            INSERT INTO chalDatapoints (pID, created, context, numAttempts, numChecks, timeToComplete) 
+            VALUES ("{p_id}", "{chal_dp["created"]}", "{chal_dp["context"]}", {chal_dp["num_attempts"]}, {chal_dp["num_checks"]}, {chal_dp["time_to_complete"]})
         """)
 
     def insert_start(self, p_id, start_dp):
