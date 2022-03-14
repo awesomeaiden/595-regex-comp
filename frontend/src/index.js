@@ -3,12 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import * as Survey from "survey-react";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <SurveyReact.Survey model={survey}/>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('surveyElement')
 );
 
 // If you want to start measuring performance in your app, pass a function
