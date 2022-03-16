@@ -165,7 +165,7 @@ function App() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(sender.data)
+            body: JSON.stringify(dataToSend)
         };
         fetch('http://localhost:8000/log', postConfig).then(function(response) {
             // Check status
@@ -173,7 +173,7 @@ function App() {
             options.showDataSavingSuccess();
         }).catch(function(error) {
             console.log(error);
-            options.showDataSavingError("UNABLE TO SEND DATA! Please copy this data and send to gonza487@purdue.edu:\n" + JSON.stringify(sender.data));
+            options.showDataSavingError("UNABLE TO SEND DATA! Please copy this data and send to gonza487@purdue.edu:\n" + JSON.stringify(dataToSend));
         });
     };
 

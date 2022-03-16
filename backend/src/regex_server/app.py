@@ -37,35 +37,34 @@ def generate_regex_visualization_method1():
 @app.route("/log", methods=['POST'])
 def log_data():
     print(request.json)
-    datalog = json.loads(request.json)
-    for
-    # If startup datapoint
-    if data["payload"]["context"] == "startup":
-        # First insert new participant
-        new_participant = {
-            "id": datalog["participantID"],
-            "created": datalog["timestamp"]
-        }
-        db.insert_participant(new_participant)
-        # Now insert startup datapoint
-        new_startup = {
-            "created": datalog["timestamp"],
-            "experience": datalog["payload"]["datapoint"]["experience"],
-            "familiarity": datalog["payload"]["datapoint"]["familiarity"],
-            "skill": datalog["payload"]["datapoint"]["skill"]
-        }
-        db.insert_start(datalog["participantID"], new_startup)
-        return Response(status=200)
-    else:  # Assumed to be challenge datapoint
-        new_challenge = {
-            "created": datalog["timestamp"],
-            "context": datalog["payload"]["context"],
-            "num_attempts": datalog["payload"]["datapoint"]["numAttempts"],
-            "num_checks": datalog["payload"]["datapoint"]["numChecks"],
-            "time_to_complete": datalog["payload"]["datapoint"]["timeToComplete"]
-        }
-        db.insert_chal(datalog["participantID"], new_challenge)
-        return Response(status=200)
+    datalog = request.json
+    for payload in datalog["payloads"]:
+        # If startup datapoint
+        if payload["context"] == "startup":
+            # First insert new participant
+            new_participant = {
+                "id": datalog["participantID"],
+                "created": datalog["timestamp"]
+            }
+            db.insert_participant(new_participant)
+            # Now insert startup datapoint
+            new_startup = {
+                "created": datalog["timestamp"],
+                "experience": payload["datapoint"]["experience"],
+                "familiarity": payload["datapoint"]["familiarity"],
+                "skill": payload["datapoint"]["skill"]
+            }
+            db.insert_start(datalog["participantID"], new_startup)
+        else:  # Assumed to be challenge datapoint
+            new_challenge = {
+                "created": datalog["timestamp"],
+                "context": payload["context"],
+                "num_attempts": payload["datapoint"]["numAttempts"],
+                "num_checks": payload["datapoint"]["numChecks"],
+                "time_to_complete": payload["datapoint"]["timeToComplete"]
+            }
+            db.insert_chal(datalog["participantID"], new_challenge)
+    return Response(status=200)
 
 
 def main():
