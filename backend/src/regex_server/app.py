@@ -1,15 +1,19 @@
 from __future__ import absolute_import
 from regex_server.database import database
 from flask import Flask, request, Response
+from flask_cors import CORS
 import sys
 import base64
 from dotenv import load_dotenv
+import json
 from datetime import datetime
 import uuid
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Connect to database
 db = database.Database()
@@ -32,9 +36,11 @@ def generate_regex_visualization_method1():
 
 @app.route("/log", methods=['POST'])
 def log_data():
-    datalog = request.json
+    print(request.json)
+    datalog = json.loads(request.json)
+    for
     # If startup datapoint
-    if datalog["payload"]["context"] == "startup":
+    if data["payload"]["context"] == "startup":
         # First insert new participant
         new_participant = {
             "id": datalog["participantID"],
