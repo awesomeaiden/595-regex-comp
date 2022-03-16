@@ -68,10 +68,45 @@ let surveyJson = {
                     "correctAnswer": "Patrick Henry"
                 }
             ]
+        }, {
+            "elements": [
+                {
+                    "type": "text",
+                    "name": "control",
+                    "title": "Enter a string that fits this regular expression: '[0-9]*'",
+                    "validators": [
+                        {
+                            type: "expression",
+                            expression: "isMatch({control})",
+                            text:"That string does not match the pattern."
+                        }
+                    ]
+                }
+            ]
         }
     ],
     completedHtml: "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
 };
+
+function isMatch(params: any[]): any {
+    /*
+    if (params.length < 1){
+        return false;
+    }
+    */
+    console.log("here");
+    var self = this;
+    let input_str = params[0];
+    const regex = new RegExp('[0-9]*'); //Should fit any number
+    self.returnResult( regex.test(input_str) ); //return result to library
+    return false; //return value is ignored
+}
+
+/* This line is supposed to register the isMatch function with 
+ * the SurveyJS library so that it can be used with the validator expression.
+ * It currently breaks the code 
+ */
+//Survey.FunctionFactory.Instance.register("isMatch",isMatch);
 
 function App() {
     const survey = new Model(surveyJson);
