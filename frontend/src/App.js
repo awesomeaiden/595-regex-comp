@@ -29,7 +29,12 @@ let submission = {
         experience: -1,
         skill: -1
     },
-    control: {
+    control1: {
+        timeToComplete: -1,
+        numAttempts: -1,
+        numChecks: -1
+    },
+    control2: {
         timeToComplete: -1,
         numAttempts: -1,
         numChecks: -1
@@ -111,12 +116,28 @@ let surveyJson = {
             elements: [
                 {
                     type: "text",
-                    name: "control",
+                    name: "control1",
                     title: "Enter a string that fits this regular expression: '^[0-9]*$'",
                     validators: [
                         {
                             type: "expression",
-                            expression: "isMatch({control})",
+                            expression: "control1Validator({control1})",
+                            text: "That string does not match the pattern."
+                        }
+                    ],
+                    isRequired: true
+                }
+            ]
+        }, {
+            elements: [
+                {
+                    type: "text",
+                    name: "control2",
+                    title: "Create a regex that matches a string that starts with exactly 2 numbers, followed by an underscore, and ends with 4 capital letters. For example: '46_MKLN'",
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "control2Validator({control2})",
                             text: "That string does not match the pattern."
                         }
                     ],
@@ -128,17 +149,19 @@ let surveyJson = {
     completedHtml: "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
 };
 
-function isMatch(params: any[]): any {
-    let questionNum = 0;
+
+/* Validator Function */
+function control1Validator(params: any[]): any {
+    let questionNum = 0; //First question in quiz
     numAttempts[questionNum]++;
     let input_str = params[0];
     const regex = new RegExp(/^[0-9]*$/); // Should fit any number of digits 0-9 ('3426', '2', '3512317433' etc)
-    correctAnswer[0] = regex.test(input_str);
+    correctAnswer[questionNum] = regex.test(input_str);
 
     /* Set data for logging */
-    submission.control.numAttempts = numAttempts[questionNum];
-    //submission.control.timeToComplete = survey.timeSpent();
-    submission.control.numChecks = 54; //not sure what numChecks is
+    submission.control1.numAttempts = numAttempts[questionNum];
+    //submission.control1.timeToComplete = survey.timeSpent();
+    submission.control1.numChecks = 54; //not sure what numChecks is
     
     /* If we've reached max number of attempts return true */
     if( numAttempts[questionNum] >= MAX_ATTEMPTS ){
@@ -146,11 +169,41 @@ function isMatch(params: any[]): any {
     }
     
     /* Otherwise just return whether it was a match or not */
-    return correctAnswer[0];
+    return correctAnswer[questionNum];
 }
 
-// Register isMatch standard function
-FunctionFactory.Instance.register("isMatch", isMatch);
+function control2Validator(params: any[]): any {
+    let questionNum = 1; //2nd question in quiz
+    numAttempts[questionNum]++;
+    let input_str = params[0];
+    const regex = new RegExp(input_str); //User defined input regex
+
+    /* NOTE: For this scenario it might not be enough to just test it against 1 string that
+     * works. For example, if we want 4 capital letters, and the user's regex accepts Capital 
+     * and lowercase letters, our string will pass. In this scenario we should also test
+     * against a string that should fail and we can AND the conditions together to make sure 
+     * works as expected. Also, if we never test if strings fail the user could put in a regex
+     * that expects any character and it would always pass.
+     */
+    correctAnswer[questionNum] = (regex.test('87_REDP') && !(regex.test('32_flUX')) );
+
+    /* Set data for logging */
+    submission.control2.numAttempts = numAttempts[questionNum];
+    //submission.control2.timeToComplete = survey.timeSpent();
+    submission.control2.numChecks = 89; //not sure what numChecks is
+    
+    /* If we've reached max number of attempts return true */
+    if( numAttempts[questionNum] >= MAX_ATTEMPTS ){
+        return true;
+    }
+    
+    /* Otherwise just return whether it was a match or not */
+    return correctAnswer[questionNum];
+}
+
+// Register Validator standard functions
+FunctionFactory.Instance.register("control1Validator", control1Validator);
+FunctionFactory.Instance.register("control2Validator", control2Validator);
 
 const survey = new Model(surveyJson);
 function App() {
@@ -174,8 +227,12 @@ function App() {
                     "datapoint": submission.startup
                 },
                 {
-                    "context": "control",
-                    "datapoint": submission.control
+                    "context": "control1",
+                    "datapoint": submission.control1
+                },
+                {
+                    "context": "control2",
+                    "datapoint": submission.control2
                 },
                 {
                     "context": "explain",
