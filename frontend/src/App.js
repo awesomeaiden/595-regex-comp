@@ -5,6 +5,24 @@ import { v4 as uuidv4 } from 'uuid';
 
 StylesManager.applyTheme("modern");
 
+/* CONSTANTS */
+
+/* Define the max number of attempts per question */
+const MAX_ATTEMPTS = 3;
+
+/* The total number of questions in the survey */
+const NUM_QUESTIONS = 12;
+
+
+/* GLOBALS */
+
+/* Array to hold number of attempts each question took */
+var numAttempts = new Array(NUM_QUESTIONS).fill(0);
+
+/* Array to hold whether the user got the correct answer 
+ * or not for that question */
+var correctAnswer = new Array(NUM_QUESTIONS).fill(false);
+
 let submission = {
     startup: {
         familiarity: -1,
@@ -14,7 +32,7 @@ let submission = {
     control: {
         timeToComplete: -1,
         numAttempts: -1,
-        numChecks: 0
+        numChecks: -1
     },
     explain: {
         timeToComplete: -1,
@@ -40,7 +58,7 @@ let surveyJson = {
     showProgressBar: "bottom",
     showTimerPanel: "top",
     maxTimeToFinishPage: 180,
-    maxTimeToFinish: 1000,
+    maxTimeToFinish: 900,
     firstPageIsStarted: true,
     startSurveyText: "Start Assessment",
     pages: [
@@ -111,16 +129,31 @@ let surveyJson = {
 };
 
 function isMatch(params: any[]): any {
+    let questionNum = 0;
+    numAttempts[questionNum]++;
     let input_str = params[0];
     const regex = new RegExp(/^[0-9]*$/); // Should fit any number of digits 0-9 ('3426', '2', '3512317433' etc)
-    return regex.test(input_str);
+    correctAnswer[0] = regex.test(input_str);
+
+    /* Set data for logging */
+    submission.control.numAttempts = numAttempts[questionNum];
+    //submission.control.timeToComplete = survey.timeSpent();
+    submission.control.numChecks = 54; //not sure what numChecks is
+    
+    /* If we've reached max number of attempts return true */
+    if( numAttempts[questionNum] >= MAX_ATTEMPTS ){
+        return true;
+    }
+    
+    /* Otherwise just return whether it was a match or not */
+    return correctAnswer[0];
 }
 
 // Register isMatch standard function
 FunctionFactory.Instance.register("isMatch", isMatch);
 
+const survey = new Model(surveyJson);
 function App() {
-    const survey = new Model(surveyJson);
     survey.focusFirstQuestionAutomatic = false;
 
     const alertResults = useCallback((sender) => {
