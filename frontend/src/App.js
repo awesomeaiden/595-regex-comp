@@ -3,6 +3,7 @@ import "survey-react/modern.min.css";
 import { Survey, StylesManager, Model, FunctionFactory } from "survey-react";
 import { v4 as uuidv4 } from 'uuid';
 let startupJSON = require('./questions/startup.json');
+let regexJSON = require('./questions/regex.json');
 
 StylesManager.applyTheme("modern");
 
@@ -14,15 +15,10 @@ const MAX_ATTEMPTS = 10;
 /* The total number of questions in the survey */
 const NUM_QUESTIONS = 12;
 
-
 /* GLOBALS */
 
 /* Array to hold number of attempts each question took */
 let numAttempts = new Array(NUM_QUESTIONS).fill(0);
-
-/* Array to hold whether the user got the correct answer 
- * or not for that question */
-let correctAnswer = new Array(NUM_QUESTIONS).fill(false);
 
 let submission = {
     startup: {
@@ -109,6 +105,17 @@ let submission = {
 
 let raffleEmail = "N/A";
 
+function getPlaceholder(questionName) {
+    return {
+        elements: [
+            {
+                type: "html",
+                html: questionName + " placeholder"
+            }
+        ]
+    }
+}
+
 let surveyJson = {
     title: "Regex Comprehension Study",
     showProgressBar: "bottom",
@@ -132,7 +139,19 @@ let surveyJson = {
             ]
         }, {
             elements: startupJSON
-        }
+        },
+        getPlaceholder("control1"),
+        getPlaceholder("control2"),
+        getPlaceholder("control3"),
+        getPlaceholder("explain1"),
+        getPlaceholder("explain2"),
+        getPlaceholder("explain3"),
+        getPlaceholder("automata1"),
+        getPlaceholder("automata2"),
+        getPlaceholder("automata3"),
+        getPlaceholder("code1"),
+        getPlaceholder("code2"),
+        getPlaceholder("code3")
     ],
     completedHtml: "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
 };
@@ -144,37 +163,44 @@ function startupSaver(params: any[]): any {
     let value = params[0];
     // Name of attribute to save to
     let attributeName = params[1];
-    console.log("Setting " + attributeName + ": " + value.toString());
+    console.log("Saving startup " + attributeName + ": " + value.toString());
     submission.startup[attributeName] = value;
+
+    // NOW: Fetch question sequence from server
+    // TODO: Replace placeholder with actual sequence fetch
+    // TODO: Make this custom validator async so it waits properly for completion before continuing
+    let sequence = [[0, 1, 3, 2], [2, 0, 3, 1], [0, 3, 2, 1]];
+
+    // The first array represents the order of string questions to present (control, explain, automata, code)
+    for (let i = 0; i < sequence[0].length; i++) {
+        // Replace placeholder with question
+        surveyJson.pages[2 + (i * 3)] = regexJSON.string[i];
+        // Add question name to validation call
+        surveyJson.pages[2 + (i * 3)].validators[0].expression = surveyJson.pages[2 + (i * 3)].validators[0].expression
+    }
+
+    // The second array represents the order of create questions to present (control, explain, automata, code)
+    for (let i = 0; i < sequence[1].length; i++) {
+        surveyJson.pages[3 + (i * 3)] = regexJSON.create[i];
+    }
+
+    // The third array represents the order of update questions to present (control, explain, automata, code)
+    for (let i = 0; i < sequence[2].length; i++) {
+        surveyJson.pages[4 + (i * 3)] = regexJSON.update[i];
+    }
+
     return true;
 }
 
-function control1Validator(params: any[]): any {
-    let questionNum = 0; //First question in quiz
-    numAttempts[questionNum]++;
-    let input_str = params[0];
-    const regex = new RegExp(/^[0-9]*$/); // Should fit any number of digits 0-9 ('3426', '2', '3512317433' etc)
-    correctAnswer[questionNum] = regex.test(input_str);
-
-    /* Set data for logging */
-    submission.control1.numAttempts = numAttempts[questionNum];
-    //submission.control1.timeToComplete = survey.timeSpent();
-    submission.control1.numChecks = 54; //not sure what numChecks is
-    
-    /* If we've reached max number of attempts return true */
-    if( numAttempts[questionNum] >= MAX_ATTEMPTS ){
-        return true;
-    }
-    
-    /* Otherwise just return whether it was a match or not */
-    return correctAnswer[questionNum];
-}
-
-function control2Validator(params: any[]): any {
-    let questionNum = 1; //2nd question in quiz
-    numAttempts[questionNum]++;
-    let input_str = params[0];
-    const regex = new RegExp(input_str); //User defined input regex
+function regexValidator(params: any[]): any {
+    // First param is user's regex
+    let userRegex = new RegExp(params[0]);
+    // Second param is "correct" regex to compare to
+    let correctRegex = new RegExp(params[1]);
+    // Rest of params (except for last param) are validation strings to check against
+    let validationStrings = params.slice(2, params.length - 1);
+    // Last param is name of question (control1, explain3 etc)
+    let questionName = params[params.length - 1];
 
     /* NOTE: For this scenario it might not be enough to just test it against 1 string that
      * works. For example, if we want 4 capital letters, and the user's regex accepts Capital 
@@ -189,20 +215,20 @@ function control2Validator(params: any[]): any {
     submission.control2.numAttempts = numAttempts[questionNum];
     //submission.control2.timeToComplete = survey.timeSpent();
     submission.control2.numChecks = 89; //not sure what numChecks is
-    
+
     /* If we've reached max number of attempts return true */
     if( numAttempts[questionNum] >= MAX_ATTEMPTS ){
         return true;
     }
-    
+
     /* Otherwise just return whether it was a match or not */
     return correctAnswer[questionNum];
 }
 
 // Register Validator standard functions
 FunctionFactory.Instance.register("startupSaver", startupSaver);
-FunctionFactory.Instance.register("control1Validator", control1Validator);
-FunctionFactory.Instance.register("control2Validator", control2Validator);
+FunctionFactory.Instance.register("stringValidator", stringValidator);
+FunctionFactory.Instance.register("regexValidator", regexValidator);
 
 const survey = new Model(surveyJson);
 function App() {
