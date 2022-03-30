@@ -1,0 +1,164 @@
+{
+  "string": [
+    {
+      "type": "text",
+      "name": "stringA",
+      "title": "Enter a string that fits this regular expression: '^[A-Z]{3, 5}[0-9]*$'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "stringValidator({stringA}, '^[A-Z]{3, 5}[0-9]*$')",
+          "text": "That string does not match the pattern."
+        }
+      ],
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "stringB",
+      "title": "Enter a string that fits this regular expression: '^((aab)*(c|de*))+$'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "stringValidator({stringB}, '^((aab)*(c|de*))+$')",
+          "text": "That string does not match the pattern."
+        }
+      ],
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "stringC",
+      "title": "Enter a string that fits this regular expression: '^f(v*|(c|q))n)t?$'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "stringValidator({stringC}, '^f(v*|(c|q))n)t?$')",
+          "text": "That string does not match the pattern."
+        }
+      ],
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "stringD",
+      "title": "Enter a string that fits this regular expression: '^\\d+ \\+ \\d+[x-z] \\+ \\d+[x-z]\\^2 = [x-z]$'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "stringValidator({stringD}, '^\\d+ \\+ \\d+[x-z] \\+ \\d+[x-z]\\^2 = [x-z]$')",
+          "text": "That string does not match the pattern."
+        }
+      ],
+      "isRequired": true
+    }
+  ],
+  "create": [
+    {
+      "type": "text",
+      "name": "createE",
+      "title": "Create a regex that matches a string that starts with exactly 2 numbers, followed by an underscore, and ends with 4 capital letters. For example: '46_MKLN'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "regexValidator({createE}, '^\\d\\d_[A-Z]{4}$', '46_MKLN', '32_fluX', '123_AKWD', '1_WH', 'abcd123')",
+          "text": "That regular expression is not correct! Be sure to consider edge cases."
+        }
+      ],
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "createF",
+      "title": "Create a regex that matches any non-empty string comprised of only numbers and underscores. Accepted example strings include ‘124_1_’, '__124', '_', and '123'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "regexValidator({createF}, '^[1-9_]+$', '52345___2354__3', 'abc__134_235$#', '__4523__35___3__', '15135135', '______')",
+          "text": "That regular expression is not correct! Be sure to consider edge cases."
+        }
+      ],
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "createG",
+      "title": "Create a regex that matches any string which starts with the word “userid”, followed by an underscore (‘_’), and then a sequence of 10 numbers.  For example: ‘userid_1264829527’.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "regexValidator({createG}, 'userid_[1-9]{10}', 'userid_1234567890', 'userid1234567890', 'user_1234', 'userid__1234567890', 'userid_1234')",
+          "text": "That regular expression is not correct! Be sure to consider edge cases."
+        }
+      ],
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "createH",
+      "title": "Create a regex to match a date and time in the format: yyyy/mm/dd. For example: '2022/03/01' or '1992/10/07'. You may assume that every month can have up to 31 days.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "regexValidator({createH}, '^\\d\\d\\d\\d/(0?[1-9]|1[0-2])/(3?[0-1]|[0-2][0-9])$', '2021/12/13', '02/15/22', '123/1/1', '5383/67/52', '2022-1-15')",
+          "text": "That regular expression is not correct! Be sure to consider edge cases."
+        }
+      ],
+      "isRequired": true
+    }
+  ],
+  "update": [
+    {
+      "type": "text",
+      "name": "updateI",
+      "title": "Update the following regular expression to accept both '.com' and '.edu' email addresses: '^[A-Za-z0-9_]+@[\\w]+\\.com$'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "regexValidator({updateI}, '^[A-Za-z0-9_]+@[\\w]+\\.(com|edu)$', 'gonza487@purdue.edu', 'aiden@gmail.com', 'something', 'email@something.dev')",
+          "text": "That regular expression is not correct! Be sure to consider edge cases."
+        }
+      ],
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "updateJ",
+      "title": "Update the following regular expression to accept phone numbers with or without a U.S. country code: '^(\\d\\d\\d) \\d\\d\\d-\\d\\d\\d\\d$'. For example: '+1 (123) 456-7890'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "regexValidator({updateJ}, '^(\\+1 )?(\\d\\d\\d) \\d\\d\\d-\\d\\d\\d\\d$', '(123) 456-7890', '+1 (654) 682-7365', '+1 +1 (142)134-235', '(ab2) 135-h82j')",
+          "text": "That regular expression is not correct! Be sure to consider edge cases."
+        }
+      ],
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "updateK",
+      "title": "Update the following regular expression to optionally accept a 4-digit postal code extension: '^\\d\\d\\d\\d\\d$'. For example: '47906-3518'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "regexValidator({updateK}, '^\\d\\d\\d\\d\\d(-\\d\\d\\d\\d)?$', '12345', '12345-6789', '12-543', '123', '123451245')",
+          "text": "That regular expression is not correct! Be sure to consider edge cases."
+        }
+      ],
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "updateL",
+      "title": "Update the following regular expression to only accept first and last names up to and including 50 characters in length: '^[A-Za-z]+ [A-Za-z]+$'.",
+      "validators": [
+        {
+          "type": "expression",
+          "expression": "regexValidator({updateL}, '^[A-Za-z]{1, 50} [A-Za-z]{1, 50}$', 'Aiden Gonzalez', 'aiden', 'Aiden abcdabcdefabcdabcdefabcdabcdefabcdabcdefabcdabcdef', 'abcdabcdefabcdabcdefabcdabcdefabcdabcdefabcdabcdefextrachars lastname', 'invalid124_ -_234fdf')",
+          "text": "That regular expression is not correct! Be sure to consider edge cases."
+        }
+      ],
+      "isRequired": true
+    }
+  ]
+}

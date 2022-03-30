@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import "survey-react/modern.min.css";
 import { Survey, StylesManager, Model, FunctionFactory } from "survey-react";
 import { v4 as uuidv4 } from 'uuid';
+let startupJSON = require('./questions/startup.json');
 
 StylesManager.applyTheme("modern");
 
@@ -130,132 +131,7 @@ let surveyJson = {
                 }
             ]
         }, {
-            elements: [
-                {
-                    type: "rating",
-                    name: "familiarity",
-                    title: "How would you rate your level of familiarity with regular expressions?",
-                    minRateDescription: "Completely unfamiliar",
-                    maxRateDescription: "Completely familiar",
-                    rateMin: 0,
-                    rateMax: 10,
-                    isRequired: true,
-                    validators: [
-                        {
-                            type: "expression",
-                            expression: "startupSaver({familiarity}, 'familiarity')",
-                            text: "Couldn't save startup data!"
-                        }
-                    ]
-                },
-                {
-                    type: "radiogroup",
-                    name: "lastWorked",
-                    title: "I last worked with a regular expression (wrote, modified, understood, or debugged) in the past:",
-                    choices: ["No experience", "Week", "3 months", "12 months", "5 years", "More than 5 years ago"],
-                    isRequired: true,
-                    validators: [
-                        {
-                            type: "expression",
-                            expression: "startupSaver({lastWorked}, 'lastWorked')",
-                            text: "Couldn't save startup data!"
-                        }
-                    ]
-                },
-                {
-                    type: "radiogroup",
-                    name: "unique",
-                    title: "How many unique regexes have you worked with (written, modified, understood, or debugged)?",
-                    choices: ["0", "1-5", "6-15", "16-30", "30-75", "75+"],
-                    isRequired: true,
-                    validators: [
-                        {
-                            type: "expression",
-                            expression: "startupSaver({unique}, 'unique')",
-                            text: "Couldn't save startup data!"
-                        }
-                    ]
-                },
-                {
-                    type: "radiogroup",
-                    name: "longAgo",
-                    title: "How long ago did you first encounter regular expressions?",
-                    choices: ["Never encountered", "Less than 3 years", "3-5 years", "5-10 years", "10+ years"],
-                    isRequired: true,
-                    validators: [
-                        {
-                            type: "expression",
-                            expression: "startupSaver({longAgo}, 'longAgo')",
-                            text: "Couldn't save startup data!"
-                        }
-                    ]
-                },
-                {
-                    type: "rating",
-                    name: "skill",
-                    title: "How would you rate your level of skill with regular expressions?",
-                    minRateDescription: "Totally lost",
-                    maxRateDescription: "I'm an expert",
-                    rateMin: 0,
-                    rateMax: 10,
-                    isRequired: true,
-                    validators: [
-                        {
-                            type: "expression",
-                            expression: "startupSaver({skill}, 'skill')",
-                            text: "Couldn't save startup data!"
-                        }
-                    ]
-                },
-                {
-                    type: "checkboxes",
-                    name: "languages",
-                    title: "What programming languages do you use regular expressions in?",
-                    choices: ["Javascript/Typescript", "Python", "Java", "Kotlin", "C#", "C", "C++", "HTML", "Go", "PHP", "Swift", "Other"],
-                    hasNone: true,
-                    colCount: 1,
-                    isRequired: true,
-                    validators: [
-                        {
-                            type: "expression",
-                            expression: "startupSaver({languages}, 'languages')",
-                            text: "Couldn't save startup data!"
-                        }
-                    ]
-                }
-            ]
-        }, {
-            elements: [
-                {
-                    type: "text",
-                    name: "control1",
-                    title: "Enter a string that fits this regular expression: '^[0-9]*$'",
-                    validators: [
-                        {
-                            type: "expression",
-                            expression: "control1Validator({control1})",
-                            text: "That string does not match the pattern."
-                        }
-                    ],
-                    isRequired: true
-                }
-            ]
-        }, {
-            elements: [
-                {
-                    type: "text",
-                    name: "control2",
-                    title: "Create a regex that matches a string that starts with exactly 2 numbers, followed by an underscore, and ends with 4 capital letters. For example: '46_MKLN'",
-                    validators: [
-                        {
-                            type: "expression",
-                            expression: "control2Validator({control2})",
-                            text: "That string does not match the pattern."
-                        }
-                    ],
-                    isRequired: true
-                }
-            ]
+            elements: startupJSON
         }
     ],
     completedHtml: "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
