@@ -52,9 +52,14 @@ components:
         participantID:
           description: Randomly generated unique ID for study participant
           type: string
-        payload:
-          $ref: '#/components/schemas/Payload'
+        timestamp:
+          description: Timestamp of data log
+          type: string
+        payloads:
           description: Contains captured data
+          type: array
+          items:
+            $ref: '#/components/schemas/Payload'
           properties:
             context:
               type: string
@@ -70,42 +75,61 @@ components:
                 skill:
                   format: double
                   type: number
-        timestamp:
-          description: Timestamp of data log
-          type: string
       example:
         participantID: some text
-        payload:
-          context: some text
+        payloads:
+        - context: some text
           datapoint: {}
         timestamp: some text
     DatapointStartup:
       description: Data from experiment startup
       required:
       - familiarity
-      - experience
       - skill
+      - lastWorked
+      - unique
+      - longAgo
+      - languages
       type: object
       properties:
         familiarity:
           description: Value 0-1 representing participant's familiarity with Regexes
           type: number
-        experience:
-          description: Value 0-1 representing participant's experience with Regexes
-          type: number
         skill:
           description: Value 0-1 representing participant's skill with Regexes
           type: number
+        lastWorked:
+          description: When participant last worked with regular expressions
+          type: string
+        unique:
+          description: How many unique regular expressions participant has worked
+            with
+          type: string
+        longAgo:
+          description: How long ago participant first encounter regular expressions
+          type: string
+        languages:
+          description: Programming languages in which participant has worked with
+            regular expressions
+          type: array
+          items:
+            type: string
       example:
-        familiarity: 0.6
-        experience: 0.3
-        skill: 0.4
+        familiarity: 0.4
+        skill: 0.7
+        lastWorked: some text
+        unique: some text
+        longAgo: some text
+        languages:
+        - some text
+        - some text
     DatapointChallenge:
       description: Data collected from one of the "challenge" stages of the experiment.
       required:
       - timeToComplete
       - numAttempts
       - numChecks
+      - correct
       type: object
       properties:
         timeToComplete:
@@ -118,10 +142,15 @@ components:
           description: Number of times participant utilized the comprehension method
             to check their answer
           type: integer
+        correct:
+          description: Whether participant got the question correct or not (default
+            false)
+          type: boolean
       example:
-        timeToComplete: 21000
-        numAttempts: 27
-        numChecks: 40
+        timeToComplete: 33
+        numAttempts: 90
+        numChecks: 59
+        correct: true
     Payload:
       description: 'Contains captured experimental data '
       required:
@@ -135,14 +164,10 @@ components:
 
             Possible values include:
                 "startup",
-                "control1",
-                "control2",
-                "explain1",
-                "explain2",
-                "automata1",
-                "automata2",
-                "code1",
-                "code2",
+                "control",
+                "explain",
+                "automata",
+                "code",
                 "conclusion"
           type: string
         datapoint:

@@ -8,7 +8,7 @@ StylesManager.applyTheme("modern");
 /* CONSTANTS */
 
 /* Define the max number of attempts per question */
-const MAX_ATTEMPTS = 3;
+const MAX_ATTEMPTS = 10;
 
 /* The total number of questions in the survey */
 const NUM_QUESTIONS = 12;
@@ -17,42 +17,92 @@ const NUM_QUESTIONS = 12;
 /* GLOBALS */
 
 /* Array to hold number of attempts each question took */
-var numAttempts = new Array(NUM_QUESTIONS).fill(0);
+let numAttempts = new Array(NUM_QUESTIONS).fill(0);
 
 /* Array to hold whether the user got the correct answer 
  * or not for that question */
-var correctAnswer = new Array(NUM_QUESTIONS).fill(false);
+let correctAnswer = new Array(NUM_QUESTIONS).fill(false);
 
 let submission = {
     startup: {
         familiarity: -1,
-        experience: -1,
-        skill: -1
+        lastWorked: "",
+        unique: "",
+        longAgo: "",
+        skill: -1,
+        languages: ""
     },
     control1: {
         timeToComplete: -1,
         numAttempts: -1,
-        numChecks: -1
+        numChecks: -1,
+        correct: false
     },
     control2: {
         timeToComplete: -1,
         numAttempts: -1,
-        numChecks: -1
+        numChecks: -1,
+        correct: false
     },
-    explain: {
+    control3: {
         timeToComplete: -1,
         numAttempts: -1,
-        numChecks: -1
+        numChecks: -1,
+        correct: false
     },
-    automata: {
+    explain1: {
         timeToComplete: -1,
         numAttempts: -1,
-        numChecks: -1
+        numChecks: -1,
+        correct: false
     },
-    code: {
+    explain2: {
         timeToComplete: -1,
         numAttempts: -1,
-        numChecks: -1
+        numChecks: -1,
+        correct: false
+    },
+    explain3: {
+        timeToComplete: -1,
+        numAttempts: -1,
+        numChecks: -1,
+        correct: false
+    },
+    automata1: {
+        timeToComplete: -1,
+        numAttempts: -1,
+        numChecks: -1,
+        correct: false
+    },
+    automata2: {
+        timeToComplete: -1,
+        numAttempts: -1,
+        numChecks: -1,
+        correct: false
+    },
+    automata3: {
+        timeToComplete: -1,
+        numAttempts: -1,
+        numChecks: -1,
+        correct: false
+    },
+    code1: {
+        timeToComplete: -1,
+        numAttempts: -1,
+        numChecks: -1,
+        correct: false
+    },
+    code2: {
+        timeToComplete: -1,
+        numAttempts: -1,
+        numChecks: -1,
+        correct: false
+    },
+    code3: {
+        timeToComplete: -1,
+        numAttempts: -1,
+        numChecks: -1,
+        correct: false
     }
 }
 
@@ -73,7 +123,7 @@ let surveyJson = {
                     type: "html",
                     html: "" +
                         "You are about to start a brief assessment covering the use of regular expressions with and without assistive tools. " +
-                        "<br/><br/>You will have 3 minutes to complete each question.  The entire quiz should take less than 15 minutes." +
+                        "<br/><br/>You will have 2.5 minutes to complete each question.  The entire quiz should take around 20 minutes." +
                         "<br/><br/>Upon completion, you will be asked for an email address to be entered into a drawing for a $50 Amazon gift card, if you so choose!" +
                         "<br/><br/>The assessment will begin with a few basic questions about your existing skill and knowledge of regular expressions." +
                         "<br/><br/>Please click on <b>'Start Assessment'</b> when you are ready!"
@@ -89,17 +139,56 @@ let surveyJson = {
                     maxRateDescription: "Completely familiar",
                     rateMin: 0,
                     rateMax: 10,
-                    isRequired: true
+                    isRequired: true,
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "startupSaver({familiarity}, 'familiarity')",
+                            text: "Couldn't save startup data!"
+                        }
+                    ]
                 },
                 {
-                    type: "rating",
-                    name: "experience",
-                    title: "How much prior experience do you have with regular expressions?",
-                    minRateDescription: "Never worked with them",
-                    maxRateDescription: "Extensive experience",
-                    rateMin: 0,
-                    rateMax: 10,
-                    isRequired: true
+                    type: "radiogroup",
+                    name: "lastWorked",
+                    title: "I last worked with a regular expression (wrote, modified, understood, or debugged) in the past:",
+                    choices: ["No experience", "Week", "3 months", "12 months", "5 years", "More than 5 years ago"],
+                    isRequired: true,
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "startupSaver({lastWorked}, 'lastWorked')",
+                            text: "Couldn't save startup data!"
+                        }
+                    ]
+                },
+                {
+                    type: "radiogroup",
+                    name: "unique",
+                    title: "How many unique regexes have you worked with (written, modified, understood, or debugged)?",
+                    choices: ["0", "1-5", "6-15", "16-30", "30-75", "75+"],
+                    isRequired: true,
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "startupSaver({unique}, 'unique')",
+                            text: "Couldn't save startup data!"
+                        }
+                    ]
+                },
+                {
+                    type: "radiogroup",
+                    name: "longAgo",
+                    title: "How long ago did you first encounter regular expressions?",
+                    choices: ["Never encountered", "Less than 3 years", "3-5 years", "5-10 years", "10+ years"],
+                    isRequired: true,
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "startupSaver({longAgo}, 'longAgo')",
+                            text: "Couldn't save startup data!"
+                        }
+                    ]
                 },
                 {
                     type: "rating",
@@ -109,7 +198,30 @@ let surveyJson = {
                     maxRateDescription: "I'm an expert",
                     rateMin: 0,
                     rateMax: 10,
-                    isRequired: true
+                    isRequired: true,
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "startupSaver({skill}, 'skill')",
+                            text: "Couldn't save startup data!"
+                        }
+                    ]
+                },
+                {
+                    type: "checkboxes",
+                    name: "languages",
+                    title: "What programming languages do you use regular expressions in?",
+                    choices: ["Javascript/Typescript", "Python", "Java", "Kotlin", "C#", "C", "C++", "HTML", "Go", "PHP", "Swift", "Other"],
+                    hasNone: true,
+                    colCount: 1,
+                    isRequired: true,
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "startupSaver({languages}, 'languages')",
+                            text: "Couldn't save startup data!"
+                        }
+                    ]
                 }
             ]
         }, {
@@ -150,7 +262,17 @@ let surveyJson = {
 };
 
 
-/* Validator Function */
+/* Validator Functions */
+function startupSaver(params: any[]): any {
+    // Value to save
+    let value = params[0];
+    // Name of attribute to save to
+    let attributeName = params[1];
+    console.log("Setting " + attributeName + ": " + value.toString());
+    submission.startup[attributeName] = value;
+    return true;
+}
+
 function control1Validator(params: any[]): any {
     let questionNum = 0; //First question in quiz
     numAttempts[questionNum]++;
@@ -202,6 +324,7 @@ function control2Validator(params: any[]): any {
 }
 
 // Register Validator standard functions
+FunctionFactory.Instance.register("startupSaver", startupSaver);
 FunctionFactory.Instance.register("control1Validator", control1Validator);
 FunctionFactory.Instance.register("control2Validator", control2Validator);
 
