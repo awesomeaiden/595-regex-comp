@@ -20,6 +20,9 @@ const NUM_QUESTIONS = 12;
 /* Array to hold number of attempts each question took */
 let numAttempts = new Array(NUM_QUESTIONS).fill(0);
 
+/* Array to hold number of times user utilized comprehension tool */
+let numChecks = new Array(NUM_QUESTIONS).fill(0);
+
 let submission = {
     startup: {
         familiarity: -1,
@@ -31,74 +34,74 @@ let submission = {
     },
     control1: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     control2: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     control3: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     explain1: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     explain2: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     explain3: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     automata1: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     automata2: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     automata3: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     code1: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     code2: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     },
     code3: {
         timeToComplete: -1,
-        numAttempts: -1,
-        numChecks: -1,
+        numAttempts: 0,
+        numChecks: 0,
         correct: false
     }
 }
@@ -156,6 +159,19 @@ let surveyJson = {
     completedHtml: "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
 };
 
+// Function to add an argument to a function call (written in a string)
+function addCallArg(functionString, argString) {
+    // First split the string up
+    let callArray = functionString.split('');
+
+    // Now insert argString before last ')'
+    callArray.splice(callArray.length - 1, 0, ", " + argString);
+
+    // Finally, join the string array back into a string
+    let finalString = callArray.join('');
+
+    return finalString;
+}
 
 /* Validator Functions */
 function startupSaver(params: any[]): any {
@@ -171,22 +187,30 @@ function startupSaver(params: any[]): any {
     // TODO: Make this custom validator async so it waits properly for completion before continuing
     let sequence = [[0, 1, 3, 2], [2, 0, 3, 1], [0, 3, 2, 1]];
 
+    let questionNames = Object.keys(submission);
+
     // The first array represents the order of string questions to present (control, explain, automata, code)
     for (let i = 0; i < sequence[0].length; i++) {
         // Replace placeholder with question
         surveyJson.pages[2 + (i * 3)] = regexJSON.string[i];
         // Add question name to validation call
-        surveyJson.pages[2 + (i * 3)].validators[0].expression = surveyJson.pages[2 + (i * 3)].validators[0].expression
+        surveyJson.pages[2 + (i * 3)].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 3)].validators[0].expression, questionNames[1 + (i * 3)]);
     }
 
     // The second array represents the order of create questions to present (control, explain, automata, code)
     for (let i = 0; i < sequence[1].length; i++) {
+        // Replace placeholder with question
         surveyJson.pages[3 + (i * 3)] = regexJSON.create[i];
+        // Add question name to validation call
+        surveyJson.pages[3 + (i * 3)].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 3)].validators[0].expression, questionNames[2 + (i * 3)]);
     }
 
     // The third array represents the order of update questions to present (control, explain, automata, code)
     for (let i = 0; i < sequence[2].length; i++) {
+        // Replace placeholder with question
         surveyJson.pages[4 + (i * 3)] = regexJSON.update[i];
+        // Add question name to validation call
+        surveyJson.pages[4 + (i * 3)].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 3)].validators[0].expression, questionNames[3 + (i * 3)]);
     }
 
     return true;
@@ -202,19 +226,17 @@ function regexValidator(params: any[]): any {
     // Last param is name of question (control1, explain3 etc)
     let questionName = params[params.length - 1];
 
-    /* NOTE: For this scenario it might not be enough to just test it against 1 string that
-     * works. For example, if we want 4 capital letters, and the user's regex accepts Capital 
-     * and lowercase letters, our string will pass. In this scenario we should also test
-     * against a string that should fail and we can AND the conditions together to make sure 
-     * works as expected. Also, if we never test if strings fail the user could put in a regex
-     * that expects any character and it would always pass.
-     */
-    correctAnswer[questionNum] = (regex.test('87_REDP') && !(regex.test('32_flUX')) );
+    let correct = true;
+    for (let i = 0; i < validationStrings.length; i++) {
+        if (userRegex.test(validationStrings[i]) !== correctRegex.test(validationStrings[i])) {
+            correct = false;
+        }
+    }
 
     /* Set data for logging */
-    submission.control2.numAttempts = numAttempts[questionNum];
+    submission[questionName].numAttempts += 1;
     //submission.control2.timeToComplete = survey.timeSpent();
-    submission.control2.numChecks = 89; //not sure what numChecks is
+    submission.control2.numChecks = 89; // TODO This is a placeholder
 
     /* If we've reached max number of attempts return true */
     if( numAttempts[questionNum] >= MAX_ATTEMPTS ){
