@@ -142,6 +142,20 @@ let surveyJson = {
             ]
         }, {
             elements: startupJSON
+        }, {
+            elements: [
+                {
+                    type: "html",
+                    html: "The regular expression questions will now begin.  Please continue to initialize your survey and begin",
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "surveyInitializer()",
+                            text: "Unable to initialize your survey!"
+                        }
+                    ]
+                }
+            ]
         },
         getPlaceholder("control1"),
         getPlaceholder("control2"),
@@ -174,15 +188,8 @@ function addCallArg(functionString, argString) {
 }
 
 /* Validator Functions */
-function startupSaver(params: any[]): any {
-    // Value to save
-    let value = params[0];
-    // Name of attribute to save to
-    let attributeName = params[1];
-    console.log("Saving startup " + attributeName + ": " + value.toString());
-    submission.startup[attributeName] = value;
-
-    // NOW: Fetch question sequence from server
+function surveyInitializer() {
+    // Fetch optimal sequence of questions from backend
     // TODO: Replace placeholder with actual sequence fetch
     // TODO: Make this custom validator async so it waits properly for completion before continuing
     let sequence = [[0, 1, 3, 2], [2, 0, 3, 1], [0, 3, 2, 1]];
@@ -192,28 +199,61 @@ function startupSaver(params: any[]): any {
     // The first array represents the order of string questions to present (control, explain, automata, code)
     for (let i = 0; i < sequence[0].length; i++) {
         // Replace placeholder with question
-        surveyJson.pages[2 + (i * 3)] = regexJSON.string[i];
+        surveyJson.pages[3 + (i * 3)] = regexJSON.string[i];
         // Add question name to validation call
-        surveyJson.pages[2 + (i * 3)].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 3)].validators[0].expression, questionNames[1 + (i * 3)]);
+        surveyJson.pages[3 + (i * 3)].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 3)].validators[0].expression, questionNames[1 + (i * 3)]);
     }
 
     // The second array represents the order of create questions to present (control, explain, automata, code)
     for (let i = 0; i < sequence[1].length; i++) {
         // Replace placeholder with question
-        surveyJson.pages[3 + (i * 3)] = regexJSON.create[i];
+        surveyJson.pages[4 + (i * 3)] = regexJSON.create[i];
         // Add question name to validation call
-        surveyJson.pages[3 + (i * 3)].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 3)].validators[0].expression, questionNames[2 + (i * 3)]);
+        surveyJson.pages[4 + (i * 3)].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 3)].validators[0].expression, questionNames[2 + (i * 3)]);
     }
 
     // The third array represents the order of update questions to present (control, explain, automata, code)
     for (let i = 0; i < sequence[2].length; i++) {
         // Replace placeholder with question
-        surveyJson.pages[4 + (i * 3)] = regexJSON.update[i];
+        surveyJson.pages[5 + (i * 3)] = regexJSON.update[i];
         // Add question name to validation call
-        surveyJson.pages[4 + (i * 3)].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 3)].validators[0].expression, questionNames[3 + (i * 3)]);
+        surveyJson.pages[5 + (i * 3)].validators[0].expression = addCallArg(surveyJson.pages[5 + (i * 3)].validators[0].expression, questionNames[3 + (i * 3)]);
     }
 
     return true;
+}
+
+function startupSaver(params: any[]): any {
+    // Value to save
+    let value = params[0];
+    // Name of attribute to save to
+    let attributeName = params[1];
+    console.log("Saving startup " + attributeName + ": " + value.toString());
+    submission.startup[attributeName] = value;
+    return true;
+}
+
+function stringValidator(params: any[]): any {
+    // First param is user's string
+    let userString = new RegExp(params[0]);
+    // Second param is regex to test on
+    let regex = new RegExp(params[1]);
+    // Last param is name of question (control1, explain3 etc)
+    let questionName = params[params.length - 1];
+
+    /* Set data for logging */
+    submission[questionName].numAttempts += 1;
+    //submission.control1.timeToComplete = survey.timeSpent();
+    submission[questionName].numChecks = 54; //not sure what numChecks is
+    submission[questionName].correct = regex.test(userString);
+
+    /* If we've reached max number of attempts return true */
+    if( submission[questionName].numAttempts >= MAX_ATTEMPTS ){
+        return true;
+    }
+
+    /* Otherwise, just return whether it was a match or not */
+    return submission[questionName].correct;
 }
 
 function regexValidator(params: any[]): any {
@@ -239,15 +279,16 @@ function regexValidator(params: any[]): any {
     submission.control2.numChecks = 89; // TODO This is a placeholder
 
     /* If we've reached max number of attempts return true */
-    if( numAttempts[questionNum] >= MAX_ATTEMPTS ){
+    if( submission[questionName].numAttempts >= MAX_ATTEMPTS ){
         return true;
     }
 
-    /* Otherwise just return whether it was a match or not */
-    return correctAnswer[questionNum];
+    /* Otherwise, just return whether it was a match or not */
+    return correct;
 }
 
 // Register Validator standard functions
+FunctionFactory.Instance.register("surveyInitializer", surveyInitializer);
 FunctionFactory.Instance.register("startupSaver", startupSaver);
 FunctionFactory.Instance.register("stringValidator", stringValidator);
 FunctionFactory.Instance.register("regexValidator", regexValidator);
