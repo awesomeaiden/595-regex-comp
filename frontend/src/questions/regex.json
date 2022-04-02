@@ -3,11 +3,11 @@
     {
       "type": "text",
       "name": "stringA",
-      "title": "Enter a string that fits this regular expression: '^[A-Z]{3, 5}[0-9]*$'.",
+      "title": "Enter a string that fits this regular expression: '^[A-Z]{3,5}[0-9]*$'.",
       "validators": [
         {
           "type": "expression",
-          "expression": "stringValidator({stringA}, '^[A-Z]{3, 5}[0-9]*$')",
+          "expression": "stringValidator({stringA}, '^[A-Z]{3,5}[0-9]*$')",
           "text": "That string does not match the pattern."
         }
       ],
@@ -29,11 +29,11 @@
     {
       "type": "text",
       "name": "stringC",
-      "title": "Enter a string that fits this regular expression: '^f(v*|(c|q))n)t?$'.",
+      "title": "Enter a string that fits this regular expression: '^f(v*|(c|q))nt?$'.",
       "validators": [
         {
           "type": "expression",
-          "expression": "stringValidator({stringC}, '^f(v*|(c|q))n)t?$')",
+          "expression": "stringValidator({stringC}, '^f(v*|(c|q))nt?$')",
           "text": "That string does not match the pattern."
         }
       ],
@@ -57,7 +57,8 @@
     {
       "type": "text",
       "name": "createE",
-      "title": "Create a regex that matches a string that starts with exactly 2 numbers, followed by an underscore, and ends with 4 capital letters. For example: '46_MKLN'.",
+      "title": "Create a regex that matches a string that starts with exactly 2 numbers, followed by an underscore, and ends with 4 capital letters. For example: '46_MKLN'.  NOTE: Regex must start and end with ^ and $!",
+      "defaultValue": "^$",
       "validators": [
         {
           "type": "expression",
@@ -70,7 +71,8 @@
     {
       "type": "text",
       "name": "createF",
-      "title": "Create a regex that matches any non-empty string comprised of only numbers and underscores. Accepted example strings include ‘124_1_’, '__124', '_', and '123'.",
+      "title": "Create a regex that matches any non-empty string comprised of only numbers and underscores. Accepted example strings include ‘124_1_’, '__124', '_', and '123'.  NOTE: Regex must start and end with ^ and $!",
+      "defaultValue": "^$",
       "validators": [
         {
           "type": "expression",
@@ -83,11 +85,12 @@
     {
       "type": "text",
       "name": "createG",
-      "title": "Create a regex that matches any string which starts with the word “userid”, followed by an underscore (‘_’), and then a sequence of 10 numbers.  For example: ‘userid_1264829527’.",
+      "title": "Create a regex that matches any string which starts with the word “userid”, followed by an underscore (‘_’), and then a sequence of 10 numbers.  For example: ‘userid_1264829527’.  NOTE: Regex must start and end with ^ and $!",
+      "defaultValue": "^$",
       "validators": [
         {
           "type": "expression",
-          "expression": "regexValidator({createG}, 'userid_[1-9]{10}', 'userid_1234567890', 'userid1234567890', 'user_1234', 'userid__1234567890', 'userid_1234')",
+          "expression": "regexValidator({createG}, 'userid_[0-9]{10}', 'userid_1234567890', 'userid1234567890', 'user_1234', 'userid__1234567890', 'userid_1234')",
           "text": "That regular expression is not correct! Be sure to consider edge cases."
         }
       ],
@@ -96,7 +99,8 @@
     {
       "type": "text",
       "name": "createH",
-      "title": "Create a regex to match a date and time in the format: yyyy/mm/dd. For example: '2022/03/01' or '1992/10/07'. You may assume that every month can have up to 31 days.",
+      "title": "Create a regex to match a date and time in the format: yyyy/mm/dd. For example: '2022/03/01' or '1992/10/07'. You may assume that every month can have up to 31 days.  NOTE: Regex must start and end with ^ and $!",
+      "defaultValue": "^$",
       "validators": [
         {
           "type": "expression",
@@ -112,6 +116,7 @@
       "type": "text",
       "name": "updateI",
       "title": "Update the following regular expression to accept both '.com' and '.edu' email addresses: '^[A-Za-z0-9_]+@[\\w]+\\.com$'.",
+      "defaultValue": "^[A-Za-z0-9_]+@[\\w]+\\.com$",
       "validators": [
         {
           "type": "expression",
@@ -125,6 +130,7 @@
       "type": "text",
       "name": "updateJ",
       "title": "Update the following regular expression to accept phone numbers with or without a U.S. country code: '^(\\d\\d\\d) \\d\\d\\d-\\d\\d\\d\\d$'. For example: '+1 (123) 456-7890'.",
+      "defaultValue": "^(\\d\\d\\d) \\d\\d\\d-\\d\\d\\d\\d$",
       "validators": [
         {
           "type": "expression",
@@ -138,6 +144,7 @@
       "type": "text",
       "name": "updateK",
       "title": "Update the following regular expression to optionally accept a 4-digit postal code extension: '^\\d\\d\\d\\d\\d$'. For example: '47906-3518'.",
+      "defaultValue": "^\\d\\d\\d\\d\\d$",
       "validators": [
         {
           "type": "expression",
@@ -151,10 +158,11 @@
       "type": "text",
       "name": "updateL",
       "title": "Update the following regular expression to only accept first and last names up to and including 50 characters in length: '^[A-Za-z]+ [A-Za-z]+$'.",
+      "defaultValue": "^[A-Za-z]+ [A-Za-z]+$",
       "validators": [
         {
           "type": "expression",
-          "expression": "regexValidator({updateL}, '^[A-Za-z]{1, 50} [A-Za-z]{1, 50}$', 'Aiden Gonzalez', 'aiden', 'Aiden abcdabcdefabcdabcdefabcdabcdefabcdabcdefabcdabcdef', 'abcdabcdefabcdabcdefabcdabcdefabcdabcdefabcdabcdefextrachars lastname', 'invalid124_ -_234fdf')",
+          "expression": "regexValidator({updateL}, '^[A-Za-z]{1,50} [A-Za-z]{1,50}$', 'Aiden Gonzalez', 'aiden', 'Aiden abcdabcdefabcdabcdefabcdabcdefabcdabcdefabcdabcdef', 'abcdabcdefabcdabcdefabcdabcdefabcdabcdefabcdabcdefextrachars lastname', 'invalid124_ -_234fdf')",
           "text": "That regular expression is not correct! Be sure to consider edge cases."
         }
       ],
