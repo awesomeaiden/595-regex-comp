@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import "survey-react/modern.min.css";
-import { Survey, StylesManager, Model, FunctionFactory } from "survey-react";
+import { Survey, StylesManager, Model, FunctionFactory} from "survey-react";
 import { v4 as uuidv4 } from 'uuid';
 let startupJSON = require('./questions/startup.json');
 let regexJSON = require('./questions/regex.json');
@@ -14,6 +14,12 @@ const MAX_ATTEMPTS = 10;
 
 /* The total number of questions in the survey */
 const NUM_QUESTIONS = 12;
+
+/* Max time user can spend on a single page/question */
+const MAX_TIME_PER_PAGE = 150; //2.5 minutes
+
+/* Max time for survey, based on number of questions * time per question */
+const MAX_TIME_FOR_SURVEY = 1950; //32.5 minutes
 
 /* GLOBALS */
 
@@ -123,8 +129,8 @@ let surveyJson = {
     title: "Regex Comprehension Study",
     showProgressBar: "bottom",
     showTimerPanel: "top",
-    maxTimeToFinishPage: 180,
-    maxTimeToFinish: 900,
+    maxTimeToFinishPage: MAX_TIME_PER_PAGE,
+    maxTimeToFinish: MAX_TIME_FOR_SURVEY,
     firstPageIsStarted: true,
     startSurveyText: "Start Assessment",
     pages: [
@@ -232,18 +238,24 @@ function stringValidator(params: any[]): any {
     // Last param is name of question (control1, explain3 etc)
     let questionName = params[params.length - 1];
 
+    //TODO: Remove
     console.log("userString: " + userString);
     console.log(regex);
     console.log("questionName: " + questionName);
+    console.log("timeToComplete: " + survey.currentPage.timeSpent);
 
     /* Set data for logging */
     submission[questionName].numAttempts += 1;
-    //submission.control1.timeToComplete = survey.timeSpent();
-    submission[questionName].numChecks = 54; //not sure what numChecks is
+    submission[questionName].timeToComplete = survey.currentPage.timeSpent;
+    submission[questionName].numChecks = 54; //TODO: This is a placeholder
     submission[questionName].correct = regex.test(userString);
 
     /* If we've reached max number of attempts return true */
     if( submission[questionName].numAttempts >= MAX_ATTEMPTS ){
+        return true;
+    }
+    /* If we are past the time limit, advance to the next question */
+    else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
         return true;
     }
 
@@ -254,6 +266,7 @@ function stringValidator(params: any[]): any {
 function regexValidator(params: any[]): any {
     // TODO If time limit is violated, don't return false - needs to allow survey to continue
     // Ensure user regex string begins with ^ and $
+
     if (params[0].charAt(0) !== '^') {
         params[0] = "^" + params[0];
     }
@@ -275,9 +288,11 @@ function regexValidator(params: any[]): any {
     // Last param is name of question (control1, explain3 etc)
     let questionName = params[params.length - 1];
 
+    //TODO: Remove
     console.log(userRegex);
     console.log(correctRegex);
     console.log(questionName);
+    console.log("timeToComplete: " + survey.currentPage.timeSpent);
 
     let correct = true;
     for (let i = 0; i < validationStrings.length; i++) {
@@ -291,11 +306,15 @@ function regexValidator(params: any[]): any {
 
     /* Set data for logging */
     submission[questionName].numAttempts += 1;
-    //submission.control2.timeToComplete = survey.timeSpent();
-    submission.control2.numChecks = 89; // TODO This is a placeholder
+    submission[questionName].timeToComplete = survey.currentPage.timeSpent;
+    submission[questionName].numChecks = 89; // TODO This is a placeholder
 
     /* If we've reached max number of attempts return true */
     if( submission[questionName].numAttempts >= MAX_ATTEMPTS ){
+        return true;
+    }
+    /* If we are past the time limit, advance to the next question */
+    else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
         return true;
     }
 
