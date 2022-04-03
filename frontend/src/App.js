@@ -133,6 +133,7 @@ let surveyJson = {
     maxTimeToFinish: MAX_TIME_FOR_SURVEY,
     firstPageIsStarted: true,
     startSurveyText: "Start Assessment",
+    questionCount: NUM_QUESTIONS,
     pages: [
         {
             elements: [
@@ -319,6 +320,7 @@ function regexValidator(params: any[]): any {
     }
 
     /* Otherwise, just return whether it was a match or not */
+    submission[questionName].correct = correct;
     return correct;
 }
 
