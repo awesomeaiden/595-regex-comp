@@ -21,40 +21,44 @@ part_2 = {
 
 start_1 = {
     "created": datetime.now(),
-    "experience": 0.3,
-    "familiarity": 0.6,
-    "skill": 0.2
+    "languages": "Python,Java",
+    "lastWorked": "3 Months",
+    "longAgo": "5-10 Years",
+    "skill": r"Intermediate: Have used more sophisticated features like non-greedy quantifiers (/a+?/) and character classes (/\d|\w|[abc]|[^\d]/)",
+    "uniqueRegexes": "16-30"
 }
 
 start_2 = {
     "created": datetime.now(),
-    "experience": 0.8,
-    "familiarity": 0.7,
-    "skill": 0.5
+    "languages": "C,C++",
+    "lastWorked": "12 Months",
+    "longAgo": "3-5 Years",
+    "skill": r"Advanced: Have used more advanced features like exact quantifiers (/abc{4}(def){2, 6}/) and escaping special characters (/$.co/)",
+    "uniqueRegexes": "75+"
 }
 
 chal_1 = {
     "created": datetime.now(),
-    "context": "equivalent code",
-    "num_attempts": 12,
-    "num_checks": 28,
-    "time_to_complete": 90000
+    "context": "control1",
+    "numAttempts": 12,
+    "numChecks": 28,
+    "timeToComplete": 90000
 }
 
 chal_2 = {
     "created": datetime.now(),
-    "context": "explanation",
-    "num_attempts": 16,
-    "num_checks": 20,
-    "time_to_complete": 70000
+    "context": "explain2",
+    "numAttempts": 16,
+    "numChecks": 20,
+    "timeToComplete": 70000
 }
 
 chal_3 = {
     "created": datetime.now(),
-    "context": "visualization",
-    "num_attempts": 4,
-    "num_checks": 7,
-    "time_to_complete": 80000
+    "context": "automata1",
+    "numAttempts": 4,
+    "numChecks": 7,
+    "timeToComplete": 80000
 }
 
 

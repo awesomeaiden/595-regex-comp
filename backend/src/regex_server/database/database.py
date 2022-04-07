@@ -41,9 +41,12 @@ class Database:
             (
                 pID text,
                 created text,
-                experience float,
-                familiarity float,
-                skill float
+                skill text,
+                lastWorked text,
+                uniqueRegexes text,
+                longAgo text,
+                languages text
+                
             )
         """)
 
@@ -57,14 +60,14 @@ class Database:
 
     def insert_chal(self, p_id, chal_dp):
         self.insert(f"""
-            INSERT INTO chalDatapoints (pID, created, context, numAttempts, numChecks, timeToComplete) 
-            VALUES ("{p_id}", "{chal_dp["created"]}", "{chal_dp["context"]}", {chal_dp["num_attempts"]}, {chal_dp["num_checks"]}, {chal_dp["time_to_complete"]})
+            INSERT INTO chalDatapoints (pID, created, context, numAttempts, numChecks, timeToComplete)
+            VALUES ("{p_id}", "{chal_dp["created"]}", "{chal_dp["context"]}", {chal_dp["numAttempts"]}, {chal_dp["numChecks"]}, {chal_dp["timeToComplete"]})
         """)
 
     def insert_start(self, p_id, start_dp):
         self.insert(f"""
-            INSERT INTO startupDatapoints (pID, created, experience, familiarity, skill) 
-            VALUES ("{p_id}", "{start_dp["created"]}", {start_dp["experience"]}, {start_dp["familiarity"]}, {start_dp["skill"]});
+            INSERT INTO startupDatapoints (pID, created, skill, lastWorked, uniqueRegexes, longAgo, languages)
+            VALUES ("{p_id}", "{start_dp["created"]}", "{start_dp["skill"]}", "{start_dp["lastWorked"]}", "{start_dp["uniqueRegexes"]}", "{start_dp["longAgo"]}", "{start_dp["languages"]}");
         """)
 
     def get_insert_id(self):

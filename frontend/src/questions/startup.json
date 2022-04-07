@@ -1,17 +1,16 @@
 [
     {
-        "type": "rating",
-        "name": "familiarity",
-        "title": "How would you rate your level of familiarity with regular expressions?",
-        "minRateDescription": "Completely unfamiliar",
-        "maxRateDescription": "Completely familiar",
-        "rateMin": 0,
-        "rateMax": 10,
+        "type": "radiogroup",
+        "name": "skill",
+        "title": "How would you rate your level of familiarity and skill with regular expressions?",
+        "choices": ["Beginner: Have basic experience using only characters and simple quantifiers (such as /(abd)*tf/)",
+                    "Intermediate: Have used more sophisticated features like non-greedy quantifiers (/a+?/) and character classes (/\\d|\\w|[abc]|[^\\d]/)",
+                    "Advanced: Have used more advanced features like exact quantifiers (/abc{4}(def){2, 6}/) and escaping special characters (/$.co/)"],
         "isRequired": true,
         "validators": [
             {
                 "type": "expression",
-                "expression": "startupSaver({familiarity}, 'familiarity')",
+                "expression": "startupSaver({skill}, 'skill')",
                 "text": "Couldn't save startup data!"
             }
         ]
@@ -32,14 +31,14 @@
     },
     {
         "type": "radiogroup",
-        "name": "unique",
+        "name": "uniqueRegexes",
         "title": "How many unique regexes have you worked with (written, modified, understood, or debugged)?",
         "choices": ["0", "1-5", "6-15", "16-30", "30-75", "75+"],
         "isRequired": true,
         "validators": [
             {
                 "type": "expression",
-                "expression": "startupSaver({unique}, 'unique')",
+                "expression": "startupSaver({uniqueRegexes}, 'uniqueRegexes')",
                 "text": "Couldn't save startup data!"
             }
         ]
@@ -54,23 +53,6 @@
             {
                 "type": "expression",
                 "expression": "startupSaver({longAgo}, 'longAgo')",
-                "text": "Couldn't save startup data!"
-            }
-        ]
-    },
-    {
-        "type": "rating",
-        "name": "skill",
-        "title": "How would you rate your level of skill with regular expressions?",
-        "minRateDescription": "Totally lost",
-        "maxRateDescription": "I'm an expert",
-        "rateMin": 0,
-        "rateMax": 10,
-        "isRequired": true,
-        "validators": [
-            {
-                "type": "expression",
-                "expression": "startupSaver({skill}, 'skill')",
                 "text": "Couldn't save startup data!"
             }
         ]

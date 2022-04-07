@@ -31,11 +31,10 @@ let numChecks = new Array(NUM_QUESTIONS).fill(0);
 
 let submission = {
     startup: {
-        familiarity: -1,
-        lastWorked: "",
-        unique: "",
-        longAgo: "",
         skill: -1,
+        lastWorked: "",
+        uniqueRegexes: "",
+        longAgo: "",
         languages: ""
     },
     control1: {
