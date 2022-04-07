@@ -335,11 +335,6 @@ const survey = new Model(surveyJson);
 function App() {
     survey.focusFirstQuestionAutomatic = false;
 
-    const alertResults = useCallback((sender) => {
-        const results = JSON.stringify(sender.data);
-        alert(results);
-    }, []);
-
     const sendResults = function (sender, options) {
         // Show message about saving results
         options.showDataSaving();
@@ -421,7 +416,6 @@ function App() {
         });
     };
 
-    survey.onComplete.add(alertResults);
     survey.onComplete.add(sendResults);
 
     useEffect(() => {

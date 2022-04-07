@@ -57,6 +57,11 @@ def log_data():
     return Response(status=200)
 
 
+@app.route("/sequence", methods=["GET"])
+def get_sequence():
+    return Response(status=200)
+
+
 def main():
     if len(sys.argv) != 3:
         print("Error, usage: python app.py <ip> <port>")
