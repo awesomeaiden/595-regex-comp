@@ -48,22 +48,12 @@ def log_data():
             }
             db.insert_participant(new_participant)
             # Now insert startup datapoint
-            new_startup = {
-                "created": datalog["timestamp"],
-                "experience": payload["datapoint"]["experience"],
-                "familiarity": payload["datapoint"]["familiarity"],
-                "skill": payload["datapoint"]["skill"]
-            }
-            db.insert_start(datalog["participantID"], new_startup)
+            payload["datapoint"]["created"] = datalog["timestamp"]
+            db.insert_start(datalog["participantID"], payload["datapoint"])
         else:  # Assumed to be challenge datapoint
-            new_challenge = {
-                "created": datalog["timestamp"],
-                "context": payload["context"],
-                "num_attempts": payload["datapoint"]["numAttempts"],
-                "num_checks": payload["datapoint"]["numChecks"],
-                "time_to_complete": payload["datapoint"]["timeToComplete"]
-            }
-            db.insert_chal(datalog["participantID"], new_challenge)
+            payload["datapoint"]["created"] = datalog["timestamp"]
+            payload["datapoint"]["context"] = payload["context"]
+            db.insert_chal(datalog["participantID"], payload["datapoint"])
     return Response(status=200)
 
 
