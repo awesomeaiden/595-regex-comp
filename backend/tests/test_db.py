@@ -40,6 +40,7 @@ start_2 = {
 chal_1 = {
     "created": datetime.now(),
     "context": "control1",
+    "questionName": "stringB",
     "numAttempts": 12,
     "numChecks": 28,
     "timeToComplete": 90000
@@ -48,6 +49,7 @@ chal_1 = {
 chal_2 = {
     "created": datetime.now(),
     "context": "explain2",
+    "questionName": "createE",
     "numAttempts": 16,
     "numChecks": 20,
     "timeToComplete": 70000
@@ -56,6 +58,7 @@ chal_2 = {
 chal_3 = {
     "created": datetime.now(),
     "context": "automata1",
+    "questionName": "stringC",
     "numAttempts": 4,
     "numChecks": 7,
     "timeToComplete": 80000
@@ -105,6 +108,8 @@ def test_database():
     assert(len(database.query("SELECT * FROM participants")) == 2)
     assert(len(database.query("SELECT * FROM startupDatapoints")) == 2)
     assert(len(database.query("SELECT * FROM chalDatapoints")) == 6)
+
+    print(database.get_question_distribution())
 
     # Test backup and close
     database.shutdown()

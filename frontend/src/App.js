@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import {useCallback, useEffect, useState} from "react";
 import "survey-react/modern.min.css";
 import { Survey, StylesManager, Model, FunctionFactory} from "survey-react";
 import { v4 as uuidv4 } from 'uuid';
@@ -38,72 +38,84 @@ let submission = {
         languages: ""
     },
     control1: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     control2: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     control3: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     explain1: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     explain2: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     explain3: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     automata1: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     automata2: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     automata3: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     code1: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     code2: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
     code3: {
+        questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
@@ -118,7 +130,8 @@ function getPlaceholder(questionName) {
         elements: [
             {
                 type: "html",
-                html: questionName + " placeholder"
+                html: questionName + " placeholder",
+                name: questionName
             }
         ]
     }
@@ -181,43 +194,72 @@ function addCallArg(functionString, argString) {
 
 function surveyInitializer() {
     // Fetch optimal sequence of questions from backend
-    // TODO: Replace placeholder with actual sequence fetch
-    // TODO: Make this custom validator async so it waits properly for completion before continuing
-    let sequence = [[0, 1, 3, 2], [2, 0, 3, 1], [0, 3, 2, 1]];
+    const getConfig = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    fetch('http://localhost:8000/sequence', getConfig).then(async function(response) {
+        // Check status
+        response = await response.json();
+        let sequence = response.sequence;
+        console.log(sequence);
+        let questionNames = Object.keys(submission);
+        let surveyQuestions = [];
+        for (let i = 0; i < questionNames.length; i++) {
+            surveyQuestions.push(survey.getQuestionByName(questionNames[i]));
+        }
+        console.log(surveyQuestions);
 
-    let questionNames = Object.keys(submission);
+        // The first array represents the order of string questions to present (control, explain, automata, code)
+        for (let i = 0; i < sequence[0].length; i++) {
+            // Replace placeholder with question in JSON
+            surveyJson.pages[2 + (i * 3)] = {
+                elements: [regexJSON.string[sequence[0][i]]]
+            };
+            // And now actually in the survey
+            let questionProps = Object.keys(surveyJson.pages[2 + (i * 3)].elements[0]);
+            for (let j = 0; j < questionProps.length; j++) {
+                console.log(j);
+                surveyQuestions[1 + (i * 3)][questionProps[i]] = regexJSON.string[sequence[0][i]][questionProps[j]];
+            }
 
-    // The first array represents the order of string questions to present (control, explain, automata, code)
-    for (let i = 0; i < sequence[0].length; i++) {
-        // Replace placeholder with question
-        surveyJson.pages[2 + (i * 3)] = {
-            elements: [regexJSON.string[i]]
-        };
-        // Add question name to validation call
-        surveyJson.pages[2 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 3)].elements[0].validators[0].expression, questionNames[1 + (i * 3)]);
-    }
+            // Add question name to validation call
+            surveyJson.pages[2 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 3)].elements[0].validators[0].expression, questionNames[1 + (i * 3)]);
+            // Add question name to submission
+            submission[questionNames[1 + (i * 3)]].questionName = regexJSON.string[sequence[0][i]].name
+        }
 
-    // The second array represents the order of create questions to present (control, explain, automata, code)
-    for (let i = 0; i < sequence[1].length; i++) {
-        // Replace placeholder with question
-        surveyJson.pages[3 + (i * 3)] = {
-            elements: [regexJSON.create[i]]
-        };
-        // Add question name to validation call
-        surveyJson.pages[3 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 3)].elements[0].validators[0].expression, questionNames[2 + (i * 3)]);
-    }
+        // The second array represents the order of create questions to present (control, explain, automata, code)
+        for (let i = 0; i < sequence[1].length; i++) {
+            // Replace placeholder with question
+            surveyJson.pages[3 + (i * 3)] = {
+                elements: [regexJSON.create[sequence[1][i]]]
+            };
+            // Add question name to validation call
+            surveyJson.pages[3 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 3)].elements[0].validators[0].expression, questionNames[2 + (i * 3)]);
+            // Add question name to submission
+            submission[questionNames[2 + (i * 3)]].questionName = regexJSON.create[sequence[1][i]].name
+        }
 
-    // The third array represents the order of update questions to present (control, explain, automata, code)
-    for (let i = 0; i < sequence[2].length; i++) {
-        // Replace placeholder with question
-        surveyJson.pages[4 + (i * 3)] = {
-            elements: [regexJSON.update[i]]
-        };
-        // Add question name to validation call
-        surveyJson.pages[4 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 3)].elements[0].validators[0].expression, questionNames[3 + (i * 3)]);
-    }
+        // The third array represents the order of update questions to present (control, explain, automata, code)
+        for (let i = 0; i < sequence[2].length; i++) {
+            // Replace placeholder with question
+            surveyJson.pages[4 + (i * 3)] = {
+                elements: [regexJSON.update[sequence[2][i]]]
+            };
+            // Add question name to validation call
+            surveyJson.pages[4 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 3)].elements[0].validators[0].expression, questionNames[3 + (i * 3)]);
+            // Add question name to submission
+            submission[questionNames[3 + (i * 3)]].questionName = regexJSON.update[sequence[2][i]].name
+        }
 
-    return true;
+        return true;
+    }).catch(function(error) {
+        console.log(error);
+        return false;
+    });
 }
 
 /* Validator Functions */
@@ -235,32 +277,32 @@ function stringValidator(params: any[]): any {
     let userString = params[0];
     // Second param is regex to test on
     let regex = new RegExp(params[1]);
-    // Last param is name of question (control1, explain3 etc)
-    let questionName = params[params.length - 1];
+    // Last param is context of question (control1, explain3 etc)
+    let context = params[params.length - 1];
 
     //TODO: Remove
     console.log("userString: " + userString);
     console.log(regex);
-    console.log("questionName: " + questionName);
-    console.log("timeToComplete: " + survey.currentPage.timeSpent);
+    console.log("context: " + context);
+    //console.log("timeToComplete: " + survey.currentPage.timeSpent);
 
     /* Set data for logging */
-    submission[questionName].numAttempts += 1;
-    submission[questionName].timeToComplete = survey.currentPage.timeSpent;
-    submission[questionName].numChecks = 54; //TODO: This is a placeholder
-    submission[questionName].correct = regex.test(userString);
+    submission[context].numAttempts += 1;
+    //submission[context].timeToComplete = survey.currentPage.timeSpent;
+    submission[context].numChecks = 54; //TODO: This is a placeholder
+    submission[context].correct = regex.test(userString);
 
     /* If we've reached max number of attempts return true */
-    if( submission[questionName].numAttempts >= MAX_ATTEMPTS ){
+    if( submission[context].numAttempts >= MAX_ATTEMPTS ){
         return true;
     }
     /* If we are past the time limit, advance to the next question */
-    else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
-        return true;
-    }
+    // else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
+    //     return true;
+    // }
 
     /* Otherwise, just return whether it was a match or not */
-    return submission[questionName].correct;
+    return submission[context].correct;
 }
 
 function regexValidator(params: any[]): any {
@@ -285,14 +327,14 @@ function regexValidator(params: any[]): any {
     let correctRegex = new RegExp(params[1]);
     // Rest of params (except for last param) are validation strings to check against
     let validationStrings = params.slice(2, params.length - 1);
-    // Last param is name of question (control1, explain3 etc)
-    let questionName = params[params.length - 1];
+    // Last param is context of question (control1, explain3 etc)
+    let context = params[params.length - 1];
 
     //TODO: Remove
     console.log(userRegex);
     console.log(correctRegex);
-    console.log(questionName);
-    console.log("timeToComplete: " + survey.currentPage.timeSpent);
+    console.log(context);
+    //console.log("timeToComplete: " + survey.currentPage.timeSpent);
 
     let correct = true;
     for (let i = 0; i < validationStrings.length; i++) {
@@ -305,21 +347,21 @@ function regexValidator(params: any[]): any {
     }
 
     /* Set data for logging */
-    submission[questionName].numAttempts += 1;
-    submission[questionName].timeToComplete = survey.currentPage.timeSpent;
-    submission[questionName].numChecks = 89; // TODO This is a placeholder
+    submission[context].numAttempts += 1;
+    //submission[context].timeToComplete = survey.currentPage.timeSpent;
+    submission[context].numChecks = 89; // TODO This is a placeholder
 
     /* If we've reached max number of attempts return true */
-    if( submission[questionName].numAttempts >= MAX_ATTEMPTS ){
+    if( submission[context].numAttempts >= MAX_ATTEMPTS ){
         return true;
     }
     /* If we are past the time limit, advance to the next question */
-    else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
-        return true;
-    }
+    // else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
+    //     return true;
+    // }
 
     /* Otherwise, just return whether it was a match or not */
-    submission[questionName].correct = correct;
+    submission[context].correct = correct;
     return correct;
 }
 
@@ -328,11 +370,13 @@ FunctionFactory.Instance.register("startupSaver", startupSaver);
 FunctionFactory.Instance.register("stringValidator", stringValidator);
 FunctionFactory.Instance.register("regexValidator", regexValidator);
 
-// Initialize survey
-surveyInitializer();
-console.log(surveyJson);
 const survey = new Model(surveyJson);
+
+// Initialize survey
 function App() {
+
+    surveyInitializer();
+
     survey.focusFirstQuestionAutomatic = false;
 
     const sendResults = function (sender, options) {
@@ -406,11 +450,11 @@ function App() {
             },
             body: JSON.stringify(dataToSend)
         };
-        fetch('http://localhost:8000/log', postConfig).then(function(response) {
+        fetch('http://localhost:8000/log', postConfig).then(function (response) {
             // Check status
             console.log(response);
             options.showDataSavingSuccess();
-        }).catch(function(error) {
+        }).catch(function (error) {
             console.log(error);
             options.showDataSavingError("UNABLE TO SEND DATA! Please copy this data and send to gonza487@purdue.edu:\n" + JSON.stringify(dataToSend));
         });
@@ -422,7 +466,7 @@ function App() {
         document.title = "Regex Comprehension Study";
     }, []);
 
-    return <Survey model={survey} />;
+    return <Survey model={survey}/>;
 }
 
 export default App;

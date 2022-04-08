@@ -31,6 +31,7 @@ class Database:
                 pID text,
                 created text,
                 context text,
+                questionName text,
                 numAttempts integer,
                 numChecks integer,
                 timeToComplete integer
@@ -60,8 +61,8 @@ class Database:
 
     def insert_chal(self, p_id, chal_dp):
         self.insert(f"""
-            INSERT INTO chalDatapoints (pID, created, context, numAttempts, numChecks, timeToComplete)
-            VALUES ("{p_id}", "{chal_dp["created"]}", "{chal_dp["context"]}", {chal_dp["numAttempts"]}, {chal_dp["numChecks"]}, {chal_dp["timeToComplete"]})
+            INSERT INTO chalDatapoints (pID, created, context, questionName, numAttempts, numChecks, timeToComplete)
+            VALUES ("{p_id}", "{chal_dp["created"]}", "{chal_dp["context"]}", "{chal_dp["questionName"]}", {chal_dp["numAttempts"]}, {chal_dp["numChecks"]}, {chal_dp["timeToComplete"]})
         """)
 
     def insert_start(self, p_id, start_dp):
@@ -72,6 +73,9 @@ class Database:
 
     def get_insert_id(self):
         return self.query('SELECT last_insert_rowid()')[0][0]
+
+    def get_question_distribution(self):
+        return self.query('SELECT context, questionName, COUNT(questionName) FROM chalDatapoints GROUP BY context, questionName')
 
     # Query database and return selected rows
     def query(self, query_string):

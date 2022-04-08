@@ -84,45 +84,36 @@ components:
     DatapointStartup:
       description: Data from experiment startup
       required:
-      - familiarity
       - skill
       - lastWorked
-      - unique
+      - uniqueRegexes
       - longAgo
       - languages
       type: object
       properties:
-        familiarity:
-          description: Value 0-1 representing participant's familiarity with Regexes
-          type: number
-        skill:
-          description: Value 0-1 representing participant's skill with Regexes
-          type: number
         lastWorked:
           description: When participant last worked with regular expressions
-          type: string
-        unique:
-          description: How many unique regular expressions participant has worked
-            with
           type: string
         longAgo:
           description: How long ago participant first encounter regular expressions
           type: string
         languages:
-          description: Programming languages in which participant has worked with
-            regular expressions
-          type: array
-          items:
-            type: string
+          description: Comma-separated list of programming languages in which participant
+            has worked with regular expressions
+          type: string
+        skill:
+          description: Classification of skill with regular expressions
+          type: string
+        uniqueRegexes:
+          description: How many unique regular expressions participant has worked
+            with
+          type: string
       example:
-        familiarity: 0.4
-        skill: 0.7
         lastWorked: some text
-        unique: some text
         longAgo: some text
-        languages:
-        - some text
-        - some text
+        languages: some text
+        skill: some text
+        uniqueRegexes: some text
     DatapointChallenge:
       description: Data collected from one of the "challenge" stages of the experiment.
       required:
@@ -130,6 +121,7 @@ components:
       - numAttempts
       - numChecks
       - correct
+      - questionName
       type: object
       properties:
         timeToComplete:
@@ -146,6 +138,9 @@ components:
           description: Whether participant got the question correct or not (default
             false)
           type: boolean
+        questionName:
+          description: Name of question asked (for balancing purposes)
+          type: string
       example:
         timeToComplete: 33
         numAttempts: 90
