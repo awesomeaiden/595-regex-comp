@@ -5,9 +5,7 @@ from flask_cors import CORS
 import sys
 import base64
 from dotenv import load_dotenv
-import json
-from datetime import datetime
-import uuid
+import subprocess
 
 load_dotenv()
 
@@ -142,6 +140,24 @@ def get_sequence():
     }
 
 
+@app.route("/grex", methods=["POST"])
+def grex():
+    # Get user inputted strings
+    strings = request.json["strings"]
+    grex_input = ["./grex"] + strings
+
+    try:
+        grex_output = subprocess.check_output(grex_input)
+    except subprocess.CalledProcessError as e:
+        print(e.output)
+        return e.output
+
+    grex_output = grex_output.decode("utf-8").rstrip()
+
+    print(grex_output)
+    return {
+        "grex": grex_output
+    }
 
 
 def main():
