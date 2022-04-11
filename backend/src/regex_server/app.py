@@ -142,6 +142,8 @@ def get_sequence():
     }
 
 
+
+
 def main():
     if len(sys.argv) != 3:
         print("Error, usage: python app.py <ip> <port>")
