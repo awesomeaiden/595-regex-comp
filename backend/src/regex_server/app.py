@@ -54,8 +54,8 @@ def generate_regex_visualization_method1():
 
 @app.route("/log", methods=['POST'])
 def log_data():
-    print(request.json)
     datalog = request.json
+    print(datalog)
     for payload in datalog["payloads"]:
         # If startup datapoint
         if payload["context"] == "startup":
@@ -118,6 +118,7 @@ def get_sequence():
         for question in distribution[context]:
             if distribution[context][question] < low_count:
                 low_question = question
+                low_count = distribution[context][question]
         sequence[sequence_ind % 3].append(CONTEXT_QUESTIONS[context].index(low_question))
 
         # remove this question from consideration for rest of contexts that may use it

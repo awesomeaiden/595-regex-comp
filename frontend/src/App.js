@@ -292,6 +292,9 @@ function startupSaver(params: any[]): any {
     return true;
 }
 
+// To help prevent duplicate submission of results
+let submitted = false;
+
 // Initialize survey
 function App() {
 
@@ -302,9 +305,11 @@ function App() {
     const [survey, setSurvey] = useState(null);
 
     useEffect(() => {
-        surveyInitializer().then((newSurvey) => {
-            setSurvey(newSurvey);
-        });
+        // surveyInitializer().then((newSurvey) => {
+        //     setSurvey(newSurvey);
+        // });
+        // TESTING
+        setSurvey(new Model(surveyJson));
     }, []);
 
     if (survey) {
@@ -479,14 +484,17 @@ function App() {
                 },
                 body: JSON.stringify(dataToSend)
             };
-            fetch('http://localhost:8000/log', postConfig).then(function (response) {
-                // Check status
-                console.log(response);
-                options.showDataSavingSuccess();
-            }).catch(function (error) {
-                console.log(error);
-                options.showDataSavingError("UNABLE TO SEND DATA! Please copy this data and send to gonza487@purdue.edu:\n" + JSON.stringify(dataToSend));
-            });
+            if (!submitted) {
+                submitted = true;
+                fetch('http://localhost:8000/log', postConfig).then(function (response) {
+                    // Check status
+                    console.log(response);
+                    options.showDataSavingSuccess();
+                }).catch(function (error) {
+                    console.log(error);
+                    options.showDataSavingError("UNABLE TO SEND DATA! Please copy this data and send to gonza487@purdue.edu:\n" + JSON.stringify(dataToSend));
+                });
+            }
         };
 
         survey.onComplete.add(sendResults);
@@ -494,7 +502,7 @@ function App() {
         return <Survey model={survey}/>;
     }
 
-    return null;
+    return <div>Awaiting connection to backend... Refresh to retry!</div>;
 }
 
 export default App;
