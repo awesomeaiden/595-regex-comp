@@ -100,21 +100,21 @@ let submission = {
         numChecks: 0,
         correct: false
     },
-    code1: {
+    grex1: {
         questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
-    code2: {
+    grex2: {
         questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
-    code3: {
+    grex3: {
         questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
@@ -165,15 +165,42 @@ let surveyJson = {
         getPlaceholder("control1"),
         getPlaceholder("control2"),
         getPlaceholder("control3"),
+        {
+            elements: [
+                {
+                    type: "html",
+                    html: "For the next three problems, you will have access to a regex explanation tool." +
+                        "<br/><br/>This tool will take in a regular expression and break it down into its components to make it more understandable."
+                }
+            ]
+        },
         getPlaceholder("explain1"),
         getPlaceholder("explain2"),
         getPlaceholder("explain3"),
+        {
+            elements: [
+                {
+                    type: "html",
+                    html: "For the next three problems, you will have access to a regex diagramming tool." +
+                        "<br/><br/>This tool will take in a regular expression and generate a NFA diagram to represent it."
+                }
+            ]
+        },
         getPlaceholder("automata1"),
         getPlaceholder("automata2"),
         getPlaceholder("automata3"),
-        getPlaceholder("code1"),
-        getPlaceholder("code2"),
-        getPlaceholder("code3")
+        {
+            elements: [
+                {
+                    type: "html",
+                    html: "For the next three problems, you will have access to a regex generation tool." +
+                        "<br/><br/>This tool will take in a list of example strings and generate a regular expression that accepts those strings (and generally nothing else, but the tool is imperfect)."
+                }
+            ]
+        },
+        getPlaceholder("grex1"),
+        getPlaceholder("grex2"),
+        getPlaceholder("grex3")
     ],
     completedHtml: "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
 };
@@ -211,12 +238,12 @@ function surveyInitializer() {
             // The first array represents the order of string questions to present (control, explain, automata, code)
             for (let i = 0; i < sequence[0].length; i++) {
                 // Replace placeholder with question in JSON
-                surveyJson.pages[2 + (i * 3)] = {
+                surveyJson.pages[2 + (i * 4)] = {
                     elements: [regexJSON.string[sequence[0][i]]]
                 };
 
                 // Add question name to validation call
-                surveyJson.pages[2 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 3)].elements[0].validators[0].expression, questionNames[1 + (i * 3)]);
+                surveyJson.pages[2 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 4)].elements[0].validators[0].expression, questionNames[1 + (i * 4)]);
                 // Add question name to submission
                 submission[questionNames[1 + (i * 3)]].questionName = regexJSON.string[sequence[0][i]].name
             }
@@ -224,11 +251,11 @@ function surveyInitializer() {
             // The second array represents the order of create questions to present (control, explain, automata, code)
             for (let i = 0; i < sequence[1].length; i++) {
                 // Replace placeholder with question
-                surveyJson.pages[3 + (i * 3)] = {
+                surveyJson.pages[3 + (i * 4)] = {
                     elements: [regexJSON.create[sequence[1][i]]]
                 };
                 // Add question name to validation call
-                surveyJson.pages[3 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 3)].elements[0].validators[0].expression, questionNames[2 + (i * 3)]);
+                surveyJson.pages[3 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 4)].elements[0].validators[0].expression, questionNames[2 + (i * 4)]);
                 // Add question name to submission
                 submission[questionNames[2 + (i * 3)]].questionName = regexJSON.create[sequence[1][i]].name
             }
@@ -236,11 +263,11 @@ function surveyInitializer() {
             // The third array represents the order of update questions to present (control, explain, automata, code)
             for (let i = 0; i < sequence[2].length; i++) {
                 // Replace placeholder with question
-                surveyJson.pages[4 + (i * 3)] = {
+                surveyJson.pages[4 + (i * 4)] = {
                     elements: [regexJSON.update[sequence[2][i]]]
                 };
                 // Add question name to validation call
-                surveyJson.pages[4 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 3)].elements[0].validators[0].expression, questionNames[3 + (i * 3)]);
+                surveyJson.pages[4 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 4)].elements[0].validators[0].expression, questionNames[3 + (i * 4)]);
                 // Add question name to submission
                 submission[questionNames[3 + (i * 3)]].questionName = regexJSON.update[sequence[2][i]].name
             }
@@ -428,16 +455,16 @@ function App() {
                         "datapoint": submission.automata3
                     },
                     {
-                        "context": "code1",
-                        "datapoint": submission.code1
+                        "context": "grex1",
+                        "datapoint": submission.grex1
                     },
                     {
-                        "context": "code2",
-                        "datapoint": submission.code2
+                        "context": "grex2",
+                        "datapoint": submission.grex2
                     },
                     {
-                        "context": "code3",
-                        "datapoint": submission.code3
+                        "context": "grex3",
+                        "datapoint": submission.grex3
                     }
                 ],
                 "timestamp": Date.now()

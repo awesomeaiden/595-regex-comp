@@ -30,9 +30,9 @@ CONTEXT_QUESTIONS = {
     "automata1": STRING_QUESTIONS,
     "automata2": CREATE_QUESTIONS,
     "automata3": UPDATE_QUESTIONS,
-    "code1": STRING_QUESTIONS,
-    "code2": CREATE_QUESTIONS,
-    "code3": UPDATE_QUESTIONS
+    "grex1": STRING_QUESTIONS,
+    "grex2": CREATE_QUESTIONS,
+    "grex3": UPDATE_QUESTIONS
 }
 
 
@@ -90,7 +90,7 @@ def get_sequence():
         if entry[0][0:4] == "auto":
             distribution.append(entry)
     for entry in unordered_distribution:
-        if entry[0][0:4] == "code":
+        if entry[0][0:4] == "grex":
             distribution.append(entry)
     # Organize into dictionary by context, then by question
     dist_dict = dict()
