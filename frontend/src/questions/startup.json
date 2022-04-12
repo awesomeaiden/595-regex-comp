@@ -4,7 +4,7 @@
         "name": "skill",
         "title": "How would you rate your level of familiarity and skill with regular expressions?",
         "choices": ["Beginner: Have basic experience using only characters and simple quantifiers (such as /(abd)*tf/)",
-                    "|Intermediate: Have used more sophisticated features like non-greedy quantifiers (/a+?/) and character classes (/\\d|\\w|[abc]|[^\\d]/)",
+                    "Intermediate: Have used more sophisticated features like non-greedy quantifiers (/a+?/) and character classes (/\\d \\w [abc] [^\\d]/)",
                     "Advanced: Have used more advanced features like exact quantifiers (/abc{4}(def){2, 6}/) and escaping special characters (/$.co/)"],
         "isRequired": true,
         "validators": [

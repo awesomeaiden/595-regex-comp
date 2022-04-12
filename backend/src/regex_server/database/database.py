@@ -74,7 +74,7 @@ class Database:
     def get_insert_id(self):
         return self.query('SELECT last_insert_rowid()')[0][0]
 
-    def get_question_distribution(self):
+    def get_question_counts(self):
         return self.query('SELECT context, questionName, COUNT(questionName) FROM chalDatapoints GROUP BY context, questionName')
 
     # Query database and return selected rows

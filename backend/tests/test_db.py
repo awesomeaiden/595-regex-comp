@@ -109,7 +109,7 @@ def test_database():
     assert(len(database.query("SELECT * FROM startupDatapoints")) == 2)
     assert(len(database.query("SELECT * FROM chalDatapoints")) == 6)
 
-    print(database.get_question_distribution())
+    print(database.get_question_counts())
 
     # Test backup and close
     database.shutdown()

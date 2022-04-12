@@ -235,7 +235,7 @@ function surveyInitializer() {
             console.log(sequence);
             let questionNames = Object.keys(submission);
 
-            // The first array represents the order of string questions to present (control, explain, automata, code)
+            // The first array represents the order of string questions to present (control, explain, automata, grex)
             for (let i = 0; i < sequence[0].length; i++) {
                 // Replace placeholder with question in JSON
                 surveyJson.pages[2 + (i * 4)] = {
@@ -243,34 +243,36 @@ function surveyInitializer() {
                 };
 
                 // Add question name to validation call
-                surveyJson.pages[2 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 4)].elements[0].validators[0].expression, questionNames[1 + (i * 4)]);
+                surveyJson.pages[2 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 4)].elements[0].validators[0].expression, questionNames[1 + (i * 3)]);
                 // Add question name to submission
                 submission[questionNames[1 + (i * 3)]].questionName = regexJSON.string[sequence[0][i]].name
             }
 
-            // The second array represents the order of create questions to present (control, explain, automata, code)
+            // The second array represents the order of create questions to present (control, explain, automata, grex)
             for (let i = 0; i < sequence[1].length; i++) {
                 // Replace placeholder with question
                 surveyJson.pages[3 + (i * 4)] = {
                     elements: [regexJSON.create[sequence[1][i]]]
                 };
                 // Add question name to validation call
-                surveyJson.pages[3 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 4)].elements[0].validators[0].expression, questionNames[2 + (i * 4)]);
+                surveyJson.pages[3 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 4)].elements[0].validators[0].expression, questionNames[2 + (i * 3)]);
                 // Add question name to submission
                 submission[questionNames[2 + (i * 3)]].questionName = regexJSON.create[sequence[1][i]].name
             }
 
-            // The third array represents the order of update questions to present (control, explain, automata, code)
+            // The third array represents the order of update questions to present (control, explain, automata, grex)
             for (let i = 0; i < sequence[2].length; i++) {
                 // Replace placeholder with question
                 surveyJson.pages[4 + (i * 4)] = {
                     elements: [regexJSON.update[sequence[2][i]]]
                 };
                 // Add question name to validation call
-                surveyJson.pages[4 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 4)].elements[0].validators[0].expression, questionNames[3 + (i * 4)]);
+                surveyJson.pages[4 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 4)].elements[0].validators[0].expression, questionNames[3 + (i * 3)]);
                 // Add question name to submission
                 submission[questionNames[3 + (i * 3)]].questionName = regexJSON.update[sequence[2][i]].name
             }
+
+            console.log(surveyJson);
 
             resolve(new Model(surveyJson));
         }).catch(function(error) {

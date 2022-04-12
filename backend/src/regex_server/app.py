@@ -6,6 +6,7 @@ import sys
 import base64
 from dotenv import load_dotenv
 import subprocess
+import copy
 
 load_dotenv()
 
@@ -74,66 +75,61 @@ def log_data():
     return Response(status=200)
 
 
+def get_nth_key(dictionary, n=0):
+    if n < 0:
+        n += len(dictionary)
+    for i, key in enumerate(dictionary.keys()):
+        if i == n:
+            return key
+    raise IndexError("dictionary index out of range")
+
+
+def get_first_key(dictionary):
+    for key in dictionary:
+        return key
+    raise IndexError
+
+
 @app.route("/sequence", methods=["GET"])
 def get_sequence():
-    # First get current distribution of questions
-    unordered_distribution = db.get_question_distribution()
-    # Reorder list
-    distribution = []
-    for entry in unordered_distribution:
-        if entry[0][0:4] == "cont":
-            distribution.append(entry)
-    for entry in unordered_distribution:
-        if entry[0][0:4] == "expl":
-            distribution.append(entry)
-    for entry in unordered_distribution:
-        if entry[0][0:4] == "auto":
-            distribution.append(entry)
-    for entry in unordered_distribution:
-        if entry[0][0:4] == "grex":
-            distribution.append(entry)
-    # Organize into dictionary by context, then by question
-    dist_dict = dict()
-    for count in distribution:
-        # Is context in dictionary yet?
-        if not count[0] in dist_dict:
-            dist_dict[count[0]] = {
-                count[1]: count[2]
-            }
-        else:
-            dist_dict[count[0]][count[1]] = count[2]
-    # Now select the question missing / with the least uses for each context
-    print(dist_dict)
-    sequence = [[], [], []]
-    for context in dist_dict:
-        print(str(context) + ":")
-        # Any possible questions missing?
-        missing_questions = [question for question in CONTEXT_QUESTIONS[context] if question not in dist_dict[context].keys()]
-        print("missing_questions: " + str(missing_questions))
-        if len(missing_questions) > 0:
-            repeat = True
-            for question in missing_questions:
-                print(sequence)
-                if CONTEXT_QUESTIONS[context].index(question) not in sequence[int(context[-1]) - 1]:
-                    sequence[int(context[-1]) - 1].append(CONTEXT_QUESTIONS[context].index(question))
-                    print(sequence)
-                    repeat = False
-                    break
-            # Can't avoid repeating a question for this problem at this point
-            if repeat:
-                missing_indices = [i for i in [0, 1, 2, 3] if i not in sequence[int(context[-1]) - 1]]
-                sequence[int(context[-1]) - 1].append(missing_indices[0])
-                print(sequence)
-        else:
-            # Otherwise, which question has the lowest count for this context?
-            low_count = dist_dict[context][dist_dict[context].keys()[0]]
-            low_question = dist_dict[context].keys()[0]
-            for question in dist_dict[context]:
-                if dist_dict[context][question] < low_count:
-                    low_question = question
-            sequence[int(context[-1]) - 1].append(CONTEXT_QUESTIONS[context].index(low_question))
+    # Initialize empty distribution
+    distribution = copy.deepcopy(CONTEXT_QUESTIONS)
+    for context in distribution:
+        context_dict = dict()
+        for question in distribution[context]:
+            context_dict[question] = 0
+        distribution[context] = context_dict
 
-    print(sequence)
+    # Get current counts of questions and place into dictionary
+    question_counts = db.get_question_counts()
+    for entry in question_counts:
+        distribution[entry[0]][entry[1]] = entry[2]
+
+    # sequence = [[control1 string question index, explain1 ..., automata1 ..., grex1 ...],
+    #             [control2 create question index, explain2 ..., automata2 ..., grex2 ...],
+    #             [control3 update question index, explain3 ..., automata3 ..., grex3 ...]]
+    sequence = [[], [], []]
+    # Now select the question with the least uses for each context
+    sequence_ind = 0
+    for context in distribution:
+        # Which question has the lowest count for this context?
+        low_question = get_first_key(distribution[context])
+        low_count = distribution[context][low_question]
+        for question in distribution[context]:
+            if distribution[context][question] < low_count:
+                low_question = question
+        sequence[sequence_ind % 3].append(CONTEXT_QUESTIONS[context].index(low_question))
+
+        # remove this question from consideration for rest of contexts that may use it
+        i = sequence_ind + 3
+        while i < len(distribution):
+            dist_key = get_nth_key(distribution, i)
+            distribution[dist_key].pop(low_question, None)
+            i += 3
+
+        sequence_ind += 1
+
+    print("Optimal balancing sequence: " + str(sequence))
 
     return {
         "sequence": sequence
