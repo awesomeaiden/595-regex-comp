@@ -1,0 +1,6 @@
+{
+  "grex": {
+    "type": "html",
+    "html": "<script src=\"grex.js\"></script><br/>Enter a comma-separated list of strings that you want your regular expression to accept below.<br/><br/><form><input type=\"text\" id=\"grexField\" name=\"grexField\"><br/><input type=\"submit\" value=\"Submit\"></form>"
+  }
+}

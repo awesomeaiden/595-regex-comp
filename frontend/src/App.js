@@ -4,6 +4,8 @@ import { Survey, StylesManager, Model, FunctionFactory} from "survey-react";
 import { v4 as uuidv4 } from 'uuid';
 let startupJSON = require('./questions/startup.json');
 let regexJSON = require('./questions/regex.json');
+let toolsJSON = require('./questions/tools.json');
+require('./questions/grex.js');
 
 StylesManager.applyTheme("modern");
 
@@ -239,7 +241,7 @@ function surveyInitializer() {
             for (let i = 0; i < sequence[0].length; i++) {
                 // Replace placeholder with question in JSON
                 surveyJson.pages[2 + (i * 4)] = {
-                    elements: [regexJSON.string[sequence[0][i]]]
+                    elements: [regexJSON.string[sequence[0][i]], toolsJSON.grex]
                 };
 
                 // Add question name to validation call
@@ -327,7 +329,7 @@ function App() {
 
             /* Set data for logging */
             submission[context].numAttempts += 1;
-            //submission[context].timeToComplete = survey.currentPage.timeSpent;
+            submission[context].timeToComplete = survey.currentPage.timeSpent;
             submission[context].numChecks = 54; //TODO: This is a placeholder
             submission[context].correct = regex.test(userString);
 
@@ -387,7 +389,7 @@ function App() {
 
             /* Set data for logging */
             submission[context].numAttempts += 1;
-            //submission[context].timeToComplete = survey.currentPage.timeSpent;
+            submission[context].timeToComplete = survey.currentPage.timeSpent;
             submission[context].numChecks = 89; // TODO This is a placeholder
 
             /* If we've reached max number of attempts return true */
@@ -499,18 +501,8 @@ function App() {
 
         return (
             <div>
-                <Survey model={survey}>
-                <script type="text/javascript" src="switcher.js"></script>
-                <div id="explain">
-                    Explain
-                </div>
-                <div id="automata">
-                    Automata
-                </div>
-                <div id="grex">
-                    Grex
-                </div>
-                </Survey>
+                <Survey model={survey}></Survey>
+                {/*<script type="text/javascript" src="switcher.js"></script>*/}
             </div>
         );
     }
