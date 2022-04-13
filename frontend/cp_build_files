@@ -1,0 +1,4 @@
+#!/bin/bash 
+
+rm -r ../backend/npm_build
+cp -r build ../backend/npm_build
