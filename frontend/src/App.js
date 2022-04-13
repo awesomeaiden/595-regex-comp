@@ -305,11 +305,9 @@ function App() {
     const [survey, setSurvey] = useState(null);
 
     useEffect(() => {
-        // surveyInitializer().then((newSurvey) => {
-        //     setSurvey(newSurvey);
-        // });
-        // TESTING
-        setSurvey(new Model(surveyJson));
+        surveyInitializer().then((newSurvey) => {
+            setSurvey(newSurvey);
+        });
     }, []);
 
     if (survey) {
