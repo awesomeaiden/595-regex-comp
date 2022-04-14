@@ -4,7 +4,6 @@ import { Survey, StylesManager, Model, FunctionFactory} from "survey-react";
 import { v4 as uuidv4 } from 'uuid';
 let startupJSON = require('./questions/startup.json');
 let regexJSON = require('./questions/regex.json');
-
 StylesManager.applyTheme("modern");
 
 /* CONSTANTS */
@@ -100,21 +99,21 @@ let submission = {
         numChecks: 0,
         correct: false
     },
-    code1: {
+    grex1: {
         questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
-    code2: {
+    grex2: {
         questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
         numChecks: 0,
         correct: false
     },
-    code3: {
+    grex3: {
         questionName: "",
         timeToComplete: -1,
         numAttempts: 0,
@@ -165,15 +164,42 @@ let surveyJson = {
         getPlaceholder("control1"),
         getPlaceholder("control2"),
         getPlaceholder("control3"),
+        {
+            elements: [
+                {
+                    type: "html",
+                    html: "For the next three problems, you will have access to a regex explanation tool." +
+                        "<br/><br/>This tool will take in a regular expression and break it down into its components to make it more understandable."
+                }
+            ]
+        },
         getPlaceholder("explain1"),
         getPlaceholder("explain2"),
         getPlaceholder("explain3"),
+        {
+            elements: [
+                {
+                    type: "html",
+                    html: "For the next three problems, you will have access to a regex diagramming tool." +
+                        "<br/><br/>This tool will take in a regular expression and generate a NFA diagram to represent it."
+                }
+            ]
+        },
         getPlaceholder("automata1"),
         getPlaceholder("automata2"),
         getPlaceholder("automata3"),
-        getPlaceholder("code1"),
-        getPlaceholder("code2"),
-        getPlaceholder("code3")
+        {
+            elements: [
+                {
+                    type: "html",
+                    html: "For the next three problems, you will have access to a regex generation tool." +
+                        "<br/><br/>This tool will take in a list of example strings and generate a regular expression that accepts those strings (and generally nothing else, but the tool is imperfect)."
+                }
+            ]
+        },
+        getPlaceholder("grex1"),
+        getPlaceholder("grex2"),
+        getPlaceholder("grex3")
     ],
     completedHtml: "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
 };
@@ -208,42 +234,44 @@ function surveyInitializer() {
             console.log(sequence);
             let questionNames = Object.keys(submission);
 
-            // The first array represents the order of string questions to present (control, explain, automata, code)
+            // The first array represents the order of string questions to present (control, explain, automata, grex)
             for (let i = 0; i < sequence[0].length; i++) {
                 // Replace placeholder with question in JSON
-                surveyJson.pages[2 + (i * 3)] = {
+                surveyJson.pages[2 + (i * 4)] = {
                     elements: [regexJSON.string[sequence[0][i]]]
                 };
 
                 // Add question name to validation call
-                surveyJson.pages[2 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 3)].elements[0].validators[0].expression, questionNames[1 + (i * 3)]);
+                surveyJson.pages[2 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[2 + (i * 4)].elements[0].validators[0].expression, questionNames[1 + (i * 3)]);
                 // Add question name to submission
                 submission[questionNames[1 + (i * 3)]].questionName = regexJSON.string[sequence[0][i]].name
             }
 
-            // The second array represents the order of create questions to present (control, explain, automata, code)
+            // The second array represents the order of create questions to present (control, explain, automata, grex)
             for (let i = 0; i < sequence[1].length; i++) {
                 // Replace placeholder with question
-                surveyJson.pages[3 + (i * 3)] = {
+                surveyJson.pages[3 + (i * 4)] = {
                     elements: [regexJSON.create[sequence[1][i]]]
                 };
                 // Add question name to validation call
-                surveyJson.pages[3 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 3)].elements[0].validators[0].expression, questionNames[2 + (i * 3)]);
+                surveyJson.pages[3 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[3 + (i * 4)].elements[0].validators[0].expression, questionNames[2 + (i * 3)]);
                 // Add question name to submission
                 submission[questionNames[2 + (i * 3)]].questionName = regexJSON.create[sequence[1][i]].name
             }
 
-            // The third array represents the order of update questions to present (control, explain, automata, code)
+            // The third array represents the order of update questions to present (control, explain, automata, grex)
             for (let i = 0; i < sequence[2].length; i++) {
                 // Replace placeholder with question
-                surveyJson.pages[4 + (i * 3)] = {
+                surveyJson.pages[4 + (i * 4)] = {
                     elements: [regexJSON.update[sequence[2][i]]]
                 };
                 // Add question name to validation call
-                surveyJson.pages[4 + (i * 3)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 3)].elements[0].validators[0].expression, questionNames[3 + (i * 3)]);
+                surveyJson.pages[4 + (i * 4)].elements[0].validators[0].expression = addCallArg(surveyJson.pages[4 + (i * 4)].elements[0].validators[0].expression, questionNames[3 + (i * 3)]);
                 // Add question name to submission
                 submission[questionNames[3 + (i * 3)]].questionName = regexJSON.update[sequence[2][i]].name
             }
+
+            console.log(surveyJson);
 
             resolve(new Model(surveyJson));
         }).catch(function(error) {
@@ -262,6 +290,9 @@ function startupSaver(params: any[]): any {
     submission.startup[attributeName] = value;
     return true;
 }
+
+// To help prevent duplicate submission of results
+let submitted = false;
 
 // Initialize survey
 function App() {
@@ -295,7 +326,7 @@ function App() {
 
             /* Set data for logging */
             submission[context].numAttempts += 1;
-            //submission[context].timeToComplete = survey.currentPage.timeSpent;
+            submission[context].timeToComplete = survey.currentPage.timeSpent;
             submission[context].numChecks = 54; //TODO: This is a placeholder
             submission[context].correct = regex.test(userString);
 
@@ -355,7 +386,7 @@ function App() {
 
             /* Set data for logging */
             submission[context].numAttempts += 1;
-            //submission[context].timeToComplete = survey.currentPage.timeSpent;
+            submission[context].timeToComplete = survey.currentPage.timeSpent;
             submission[context].numChecks = 89; // TODO This is a placeholder
 
             /* If we've reached max number of attempts return true */
@@ -428,16 +459,16 @@ function App() {
                         "datapoint": submission.automata3
                     },
                     {
-                        "context": "code1",
-                        "datapoint": submission.code1
+                        "context": "grex1",
+                        "datapoint": submission.grex1
                     },
                     {
-                        "context": "code2",
-                        "datapoint": submission.code2
+                        "context": "grex2",
+                        "datapoint": submission.grex2
                     },
                     {
-                        "context": "code3",
-                        "datapoint": submission.code3
+                        "context": "grex3",
+                        "datapoint": submission.grex3
                     }
                 ],
                 "timestamp": Date.now()
@@ -450,37 +481,41 @@ function App() {
                 },
                 body: JSON.stringify(dataToSend)
             };
-            fetch('http://localhost:8000/log', postConfig).then(function (response) {
-                // Check status
-                console.log(response);
-                options.showDataSavingSuccess();
-            }).catch(function (error) {
-                console.log(error);
-                options.showDataSavingError("UNABLE TO SEND DATA! Please copy this data and send to gonza487@purdue.edu:\n" + JSON.stringify(dataToSend));
-            });
-            const postEmpty = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: ''
-            };
-            fetch('http://localhost:8000/backup', postEmpty).then(function (response) {
-                // Check status
-                console.log(response);
-                options.showDataSavingSuccess();
-            }).catch(function (error) {
-                console.log(error);
-                options.showDataSavingError("UNABLE TO BACKUP! Please manually backup data.\n");
-            });
-        };
+
+            if (!submitted) {
+                submitted = true;
+                fetch('http://localhost:8000/log', postConfig).then(function (response) {
+                    // Check status
+                    console.log(response);
+                    options.showDataSavingSuccess();
+                }).catch(function (error) {
+                    console.log(error);
+                    options.showDataSavingError("UNABLE TO SEND DATA! Please copy this data and send to gonza487@purdue.edu:\n" + JSON.stringify(dataToSend));
+                });
+                const postEmpty = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: ''
+                };
+                fetch('http://localhost:8000/backup', postEmpty).then(function (response) {
+                    // Check status
+                    console.log(response);
+                    options.showDataSavingSuccess();
+                }).catch(function (error) {
+                    console.log(error);
+                    options.showDataSavingError("UNABLE TO BACKUP! Please manually backup data.\n");
+                });
+            }
+        }
 
         survey.onComplete.add(sendResults);
 
-        return <Survey model={survey}/>;
+        return <Survey model={survey}></Survey>;
     }
 
-    return null;
+    return <div>Awaiting connection to backend... Refresh to retry!</div>;
 }
 
 export default App;

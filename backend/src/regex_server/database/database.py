@@ -1,6 +1,7 @@
 import os
 import sqlite3
 from datetime import datetime
+import threading
 
 
 def backup_progress(status, remaining, total):
@@ -13,46 +14,50 @@ class Database:
         self.db = sqlite3.connect(os.environ["SQLITE_DB_FILE_NAME"], check_same_thread=False)
         self.cur = self.db.cursor()
 
+        # Setup threading
+        self.lock = threading.Lock()
+
         # Set up tables if they do not exist
         self.setup_tables()
 
     def setup_tables(self):
-        # Data tables
-        self.cur.execute("""
-            CREATE TABLE IF NOT EXISTS participants
-            (
-                id text,
-                created text
-            )
-        """)
-        self.cur.execute("""
-            CREATE TABLE IF NOT EXISTS chalDatapoints
-            (
-                pID text,
-                created text,
-                context text,
-                questionName text,
-                numAttempts integer,
-                numChecks integer,
-                timeToComplete integer
-            )
-        """)
-        self.cur.execute("""
-            CREATE TABLE IF NOT EXISTS startupDatapoints
-            (
-                pID text,
-                created text,
-                skill text,
-                lastWorked text,
-                uniqueRegexes text,
-                longAgo text,
-                languages text
-                
-            )
-        """)
+        with self.lock:
+            # Data tables
+            self.cur.execute("""
+                CREATE TABLE IF NOT EXISTS participants
+                (
+                    id text,
+                    created text
+                )
+            """)
+            self.cur.execute("""
+                CREATE TABLE IF NOT EXISTS chalDatapoints
+                (
+                    pID text,
+                    created text,
+                    context text,
+                    questionName text,
+                    numAttempts integer,
+                    numChecks integer,
+                    timeToComplete integer
+                )
+            """)
+            self.cur.execute("""
+                CREATE TABLE IF NOT EXISTS startupDatapoints
+                (
+                    pID text,
+                    created text,
+                    skill text,
+                    lastWorked text,
+                    uniqueRegexes text,
+                    longAgo text,
+                    languages text
+                    
+                )
+            """)
 
-        # Save changes
-        self.db.commit()
+            # Save changes
+            self.db.commit()
 
     def insert_participant(self, participant):
         self.insert(f"""
@@ -74,17 +79,19 @@ class Database:
     def get_insert_id(self):
         return self.query('SELECT last_insert_rowid()')[0][0]
 
-    def get_question_distribution(self):
+    def get_question_counts(self):
         return self.query('SELECT context, questionName, COUNT(questionName) FROM chalDatapoints GROUP BY context, questionName')
 
     # Query database and return selected rows
     def query(self, query_string):
-        return self.cur.execute(query_string).fetchall()
+        with self.lock:
+            return self.cur.execute(query_string).fetchall()
 
     # Run command to insert into database
     def insert(self, insert_string):
-        self.cur.execute(insert_string)
-        self.db.commit()
+        with self.lock:
+            self.cur.execute(insert_string)
+            self.db.commit()
 
     # Backup and shut down database
     def shutdown(self):
