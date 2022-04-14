@@ -7,12 +7,19 @@ import base64
 from dotenv import load_dotenv
 import subprocess
 import copy
+import json
+from datetime import datetime
+import uuid
+from git import Repo
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+# Connect to GitHub Repo
+my_repo = Repo('../../595-regex-comp/')
 
 # Connect to database
 db = database.Database()
@@ -78,6 +85,13 @@ def log_data():
 def backup_data():
     print("Backing up database.")
     db.backup();
+
+    commit_message = 'Backup of database files'
+    my_repo.index.add('backend/backups/')
+    my_repo.index.commit(commit_message)
+    origin = my_repo.remote('origin')
+    origin.push()
+
     return Response(status=200)
 
 def get_nth_key(dictionary, n=0):
