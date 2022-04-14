@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 let startupJSON = require('./questions/startup.json');
 let regexJSON = require('./questions/regex.json');
 let toolsJSON = require('./questions/tools.json');
-require('./questions/grex.js');
+// require('./questions/grex');
 
 StylesManager.applyTheme("modern");
 
@@ -499,12 +499,7 @@ function App() {
 
         survey.onComplete.add(sendResults);
 
-        return (
-            <div>
-                <Survey model={survey}></Survey>
-                {/*<script type="text/javascript" src="switcher.js"></script>*/}
-            </div>
-        );
+        return <Survey model={survey}></Survey>;
     }
 
     return <div>Awaiting connection to backend... Refresh to retry!</div>;

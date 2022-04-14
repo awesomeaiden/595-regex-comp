@@ -1,6 +1,6 @@
 {
   "grex": {
     "type": "html",
-    "html": "<script src=\"grex.js\"></script><br/>Enter a comma-separated list of strings that you want your regular expression to accept below.<br/><br/><form><input type=\"text\" id=\"grexField\" name=\"grexField\"><br/><input type=\"submit\" value=\"Submit\"></form>"
+    "html": "<br/>Enter a comma-separated list of strings that you want your regular expression to accept below.<br/><br/><form id=\"grexForm\"><input type=\"text\" id=\"grexField\" name=\"grexField\"><br/><input type=\"button\" value=\"Submit\" id=\"grexSubmitButton\"></form><script>console.log(\"Hello from grex.js\");\n\n// Submit handler\ndocument.getElementById(\"grexSubmitButton\").onclick = function() {\n  console.log(\"Hello from grex.js onclick!!\");\n  let grexInput = document.querySelectorAll(\"#grexForm [name='grexField']\").values();\n  console.log(grexInput);\n}\n</script>"
   }
 }
