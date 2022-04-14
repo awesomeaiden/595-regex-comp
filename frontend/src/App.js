@@ -4,7 +4,6 @@ import { Survey, StylesManager, Model, FunctionFactory} from "survey-react";
 import { v4 as uuidv4 } from 'uuid';
 let startupJSON = require('./questions/startup.json');
 let regexJSON = require('./questions/regex.json');
-let toolsJSON = require('./questions/tools.json');
 StylesManager.applyTheme("modern");
 
 /* CONSTANTS */
@@ -239,7 +238,7 @@ function surveyInitializer() {
             for (let i = 0; i < sequence[0].length; i++) {
                 // Replace placeholder with question in JSON
                 surveyJson.pages[2 + (i * 4)] = {
-                    elements: [regexJSON.string[sequence[0][i]], toolsJSON.grex]
+                    elements: [regexJSON.string[sequence[0][i]]]
                 };
 
                 // Add question name to validation call

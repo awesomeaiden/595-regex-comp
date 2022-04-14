@@ -4,12 +4,18 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import RegExrEmbed from './RegExrEmbed';
+import RegExperEmbed from './RegExperEmbed';
 import GrexForm from './GrexForm';
+
+let regexrDisabled = false;
+let regexperDisabled = false;
+let grexDisabled = false;
 
 export default function ToolAccordion() {
     return (
         <div>
-            <Accordion disabled>
+            <Accordion disabled={regexrDisabled}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel2a-content"
@@ -18,13 +24,10 @@ export default function ToolAccordion() {
                     <Typography>RegExr</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                        malesuada lacus ex, sit amet blandit leo lobortis eget.
-                    </Typography>
+                    <RegExrEmbed></RegExrEmbed>
                 </AccordionDetails>
             </Accordion>
-            <Accordion disabled>
+            <Accordion disabled={regexperDisabled}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel3a-content"
@@ -32,8 +35,11 @@ export default function ToolAccordion() {
                 >
                     <Typography>RegExper</Typography>
                 </AccordionSummary>
+                <AccordionDetails>
+                    <RegExperEmbed></RegExperEmbed>
+                </AccordionDetails>
             </Accordion>
-            <Accordion>
+            <Accordion disabled={grexDisabled}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
