@@ -74,6 +74,11 @@ def log_data():
             db.insert_chal(datalog["participantID"], payload["datapoint"])
     return Response(status=200)
 
+@app.route("/backup", methods=['POST'])
+def backup_data():
+    print("Backing up database.")
+    db.backup();
+    return Response(status=200)
 
 def get_nth_key(dictionary, n=0):
     if n < 0:

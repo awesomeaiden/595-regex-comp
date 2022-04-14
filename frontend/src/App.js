@@ -481,6 +481,7 @@ function App() {
                 },
                 body: JSON.stringify(dataToSend)
             };
+
             if (!submitted) {
                 submitted = true;
                 fetch('http://localhost:8000/log', postConfig).then(function (response) {
@@ -491,8 +492,23 @@ function App() {
                     console.log(error);
                     options.showDataSavingError("UNABLE TO SEND DATA! Please copy this data and send to gonza487@purdue.edu:\n" + JSON.stringify(dataToSend));
                 });
+                const postEmpty = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: ''
+                };
+                fetch('http://localhost:8000/backup', postEmpty).then(function (response) {
+                    // Check status
+                    console.log(response);
+                    options.showDataSavingSuccess();
+                }).catch(function (error) {
+                    console.log(error);
+                    options.showDataSavingError("UNABLE TO BACKUP! Please manually backup data.\n");
+                });
             }
-        };
+        }
 
         survey.onComplete.add(sendResults);
 
