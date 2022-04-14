@@ -5,8 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 let startupJSON = require('./questions/startup.json');
 let regexJSON = require('./questions/regex.json');
 let toolsJSON = require('./questions/tools.json');
-// require('./questions/grex');
-
 StylesManager.applyTheme("modern");
 
 /* CONSTANTS */
