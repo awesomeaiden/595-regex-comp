@@ -84,7 +84,7 @@ def log_data():
 @app.route("/backup", methods=['POST'])
 def backup_data():
     print("Backing up database.")
-    db.backup();
+    db.backup()
 
     commit_message = 'Backup of database files'
     my_repo.index.add('backend/backups/')
