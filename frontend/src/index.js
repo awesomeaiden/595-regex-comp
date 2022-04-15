@@ -1,13 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import ToolAccordion from './ToolAccordion';
+import SurveyCoordinator from './SurveyCoordinator';
 
 ReactDOM.render(
     <React.StrictMode>
-        <App/>
-        <ToolAccordion/>
+        <SurveyCoordinator/>
     </React.StrictMode>,
     document.getElementById('root')
 );

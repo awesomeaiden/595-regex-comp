@@ -63,7 +63,7 @@
         {
           "type": "expression",
           "expression": "regexValidator({createE}, '^\\d\\d_[A-Z]{4}$', '46_MKLN', '32_fluX', '123_AKWD', '1_WH', 'abcd123')",
-          "text": "That regular expression is not correct! Be sure to consider edge cases."
+          "text": "That regular expression is not correct! Check your syntax and be sure to consider edge cases."
         }
       ],
       "isRequired": true
@@ -77,7 +77,7 @@
         {
           "type": "expression",
           "expression": "regexValidator({createF}, '^[1-9_]+$', '52345___2354__3', 'abc__134_235$#', '__4523__35___3__', '15135135', '______')",
-          "text": "That regular expression is not correct! Be sure to consider edge cases."
+          "text": "That regular expression is not correct! Check your syntax and be sure to consider edge cases."
         }
       ],
       "isRequired": true
@@ -91,7 +91,7 @@
         {
           "type": "expression",
           "expression": "regexValidator({createG}, 'userid_[0-9]{10}', 'userid_1234567890', 'userid1234567890', 'user_1234', 'userid__1234567890', 'userid_1234')",
-          "text": "That regular expression is not correct! Be sure to consider edge cases."
+          "text": "That regular expression is not correct! Check your syntax and be sure to consider edge cases."
         }
       ],
       "isRequired": true
@@ -105,7 +105,7 @@
         {
           "type": "expression",
           "expression": "regexValidator({createH}, '^\\d\\d\\d\\d/(0?[1-9]|1[0-2])/(3?[0-1]|[0-2][0-9])$', '2021/12/13', '02/15/22', '123/1/1', '5383/67/52', '2022-1-15')",
-          "text": "That regular expression is not correct! Be sure to consider edge cases."
+          "text": "That regular expression is not correct! Check your syntax and be sure to consider edge cases."
         }
       ],
       "isRequired": true
@@ -121,7 +121,7 @@
         {
           "type": "expression",
           "expression": "regexValidator({updateI}, '^[A-Za-z0-9_]+@[\\w]+\\.(com|edu)$', 'gonza487@purdue.edu', 'aiden@gmail.com', 'something', 'email@something.dev')",
-          "text": "That regular expression is not correct! Be sure to consider edge cases."
+          "text": "That regular expression is not correct! Check your syntax and be sure to consider edge cases."
         }
       ],
       "isRequired": true
@@ -135,7 +135,7 @@
         {
           "type": "expression",
           "expression": "regexValidator({updateJ}, '^(\\+1 )?(\\d\\d\\d) \\d\\d\\d-\\d\\d\\d\\d$', '(123) 456-7890', '+1 (654) 682-7365', '+1 +1 (142)134-235', '(ab2) 135-h82j')",
-          "text": "That regular expression is not correct! Be sure to consider edge cases."
+          "text": "That regular expression is not correct! Check your syntax and be sure to consider edge cases."
         }
       ],
       "isRequired": true
@@ -149,7 +149,7 @@
         {
           "type": "expression",
           "expression": "regexValidator({updateK}, '^\\d\\d\\d\\d\\d(-\\d\\d\\d\\d)?$', '12345', '12345-6789', '12-543', '123', '123451245')",
-          "text": "That regular expression is not correct! Be sure to consider edge cases."
+          "text": "That regular expression is not correct! Check your syntax and be sure to consider edge cases."
         }
       ],
       "isRequired": true
@@ -163,7 +163,7 @@
         {
           "type": "expression",
           "expression": "regexValidator({updateL}, '^[A-Za-z]{1,50} [A-Za-z]{1,50}$', 'Aiden Gonzalez', 'aiden', 'Aiden abcdabcdefabcdabcdefabcdabcdefabcdabcdefabcdabcdef', 'abcdabcdefabcdabcdefabcdabcdefabcdabcdefabcdabcdefextrachars lastname', 'invalid124_ -_234fdf')",
-          "text": "That regular expression is not correct! Be sure to consider edge cases."
+          "text": "That regular expression is not correct! Check your syntax and be sure to consider edge cases."
         }
       ],
       "isRequired": true

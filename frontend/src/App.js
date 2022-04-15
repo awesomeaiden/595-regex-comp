@@ -167,9 +167,19 @@ let surveyJson = {
         {
             elements: [
                 {
-                    type: "html",
-                    html: "For the next three problems, you will have access to a regex explanation tool." +
-                        "<br/><br/>This tool will take in a regular expression and break it down into its components to make it more understandable."
+                    type: "radiogroup",
+                    name: "regexr-introduction",
+                    title: "For the next three problems, you will have access to a regex explanation tool.  " +
+                        "This tool will take in a regular expression and break it down into its components to make it more understandable.",
+                    choices: ["Select here to enable the tool, then press 'Next'!"],
+                    isRequired: true,
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "toolSelect('regexr')",
+                            text: "Couldn't enable tool!"
+                        }
+                    ]
                 }
             ]
         },
@@ -179,9 +189,19 @@ let surveyJson = {
         {
             elements: [
                 {
-                    type: "html",
-                    html: "For the next three problems, you will have access to a regex diagramming tool." +
-                        "<br/><br/>This tool will take in a regular expression and generate a NFA diagram to represent it."
+                    type: "radiogroup",
+                    name: "regexper-introduction",
+                    title: "For the next three problems, you will have access to a regex diagramming tool.  " +
+                        "This tool will take in a regular expression and generate a NFA diagram to represent it.",
+                    choices: ["Select here to enable the tool, then press 'Next'!"],
+                    isRequired: true,
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "toolSelect('regexper')",
+                            text: "Couldn't enable tool!"
+                        }
+                    ]
                 }
             ]
         },
@@ -191,9 +211,19 @@ let surveyJson = {
         {
             elements: [
                 {
-                    type: "html",
-                    html: "For the next three problems, you will have access to a regex generation tool." +
-                        "<br/><br/>This tool will take in a list of example strings and generate a regular expression that accepts those strings (and generally nothing else, but the tool is imperfect)."
+                    type: "radiogroup",
+                    name: "grex-introduction",
+                    title: "For the next three problems, you will have access to a regex generation tool.  " +
+                        "This tool will take in a list of example strings and generate a regular expression that accepts those strings (and generally nothing else, but the tool is imperfect).",
+                    choices: ["Select here to enable the tool, then press 'Next'!"],
+                    isRequired: true,
+                    validators: [
+                        {
+                            type: "expression",
+                            expression: "toolSelect('grex')",
+                            text: "Couldn't enable tool!"
+                        }
+                    ]
                 }
             ]
         },
@@ -295,7 +325,7 @@ function startupSaver(params: any[]): any {
 let submitted = false;
 
 // Initialize survey
-function App() {
+function App(props) {
 
     useEffect(() => {
         document.title = "Regex Comprehension Study";
@@ -310,6 +340,19 @@ function App() {
     }, []);
 
     if (survey) {
+        function toolSelect(params: any[]): any {
+            console.log("MADE IT TO TOOLSELECT");
+            // Tool to select
+            let toolName = params[0];
+
+            if (toolName === "regexr" || toolName === "regexper" || toolName === "grex") {
+                // Select tool
+                props.setEnabledTool(toolName);
+                return true;
+            }
+            return false;
+        }
+
         function stringValidator(params: any[]): any {
             // First param is user's string
             let userString = params[0];
@@ -358,7 +401,6 @@ function App() {
             try {
                 userRegex = new RegExp(params[0]);
             } catch (error) {
-                alert(error);
                 return false;
             }
             // Second param is "correct" regex to compare to
@@ -406,6 +448,7 @@ function App() {
         survey.focusFirstQuestionAutomatic = false;
 
         // Register Validator standard functions
+        FunctionFactory.Instance.register("toolSelect", toolSelect);
         FunctionFactory.Instance.register("startupSaver", startupSaver);
         FunctionFactory.Instance.register("stringValidator", stringValidator);
         FunctionFactory.Instance.register("regexValidator", regexValidator);

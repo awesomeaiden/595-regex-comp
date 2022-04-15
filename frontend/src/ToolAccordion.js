@@ -8,14 +8,10 @@ import RegExrEmbed from './RegExrEmbed';
 import RegExperEmbed from './RegExperEmbed';
 import GrexForm from './GrexForm';
 
-let regexrDisabled = false;
-let regexperDisabled = false;
-let grexDisabled = false;
-
-export default function ToolAccordion() {
+export default function ToolAccordion(props) {
     return (
         <div>
-            <Accordion disabled={regexrDisabled}>
+            <Accordion disabled={props.enabledTool !== "regexr"} expanded={props.enabledTool === "regexr"}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel2a-content"
@@ -27,7 +23,7 @@ export default function ToolAccordion() {
                     <RegExrEmbed></RegExrEmbed>
                 </AccordionDetails>
             </Accordion>
-            <Accordion disabled={regexperDisabled}>
+            <Accordion disabled={props.enabledTool !== "regexper"} expanded={props.enabledTool === "regexper"}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel3a-content"
@@ -39,7 +35,7 @@ export default function ToolAccordion() {
                     <RegExperEmbed></RegExperEmbed>
                 </AccordionDetails>
             </Accordion>
-            <Accordion disabled={grexDisabled}>
+            <Accordion disabled={props.enabledTool !== "grex"} expanded={props.enabledTool === "grex"}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
