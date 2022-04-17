@@ -1,4 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import "survey-react/modern.min.css";
 import { Survey, StylesManager, Model, FunctionFactory} from "survey-react";
 import { v4 as uuidv4 } from 'uuid';
@@ -340,6 +342,8 @@ function App(props) {
     }, []);
 
     if (survey) {
+        let participantID = uuidv4();
+
         function toolSelect(params: any[]): any {
             console.log("MADE IT TO TOOLSELECT");
             // Tool to select
@@ -459,7 +463,7 @@ function App(props) {
 
             // Parse survey data into proper format
             let dataToSend = {
-                "participantID": uuidv4(),
+                "participantID": participantID,
                 "payloads": [
                     {
                         "context": "startup",
@@ -555,7 +559,19 @@ function App(props) {
 
         survey.onComplete.add(sendResults);
 
-        return <Survey model={survey}></Survey>;
+        return <div>
+            <Box
+                sx={{
+                    width: '100%',
+                    height: 30
+                }}
+            >
+                <Typography align="right" variant="h6" paddingRight={1}>
+                    ParticipantID: {participantID.slice(-12)}
+                </Typography>
+            </Box>
+            <Survey model={survey}></Survey>
+        </div>;
     }
 
     return <div>Awaiting connection to backend... Refresh to retry!</div>;
