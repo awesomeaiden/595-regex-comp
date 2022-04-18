@@ -133,7 +133,6 @@ dmypy.json
 
 # Databases
 *.db
-*.backupdb
 
 # Test output
 backend/test_output.txt
