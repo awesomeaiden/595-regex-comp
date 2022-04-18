@@ -233,7 +233,7 @@ let surveyJson = {
         getPlaceholder("grex2"),
         getPlaceholder("grex3")
     ],
-    completedHtml: "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
+    completedHtml: "<h4>This concludes the study!</b>If you would like to be entered to win one of five $10 Amazon gift cards, see this survey:</b>https://purdue.ca1.qualtrics.com/jfe/form/SV_8AC0CQsRaNP3LTw</b></h4>"
 };
 
 // Function to add an argument to a function call (written in a string)

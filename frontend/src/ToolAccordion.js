@@ -32,6 +32,7 @@ export default function ToolAccordion(props) {
                     <Typography>RegExper</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
+                    <Typography variant="h6">DISCLAIMER: This tool classifies A&#123;5&#125; as 4 repetitions of 'A', but the javascript regexes we are using considers this 5 repetitions.  Mentally add one repetition to RegExper's interpretation!</Typography>
                     <RegExperEmbed></RegExperEmbed>
                 </AccordionDetails>
             </Accordion>
