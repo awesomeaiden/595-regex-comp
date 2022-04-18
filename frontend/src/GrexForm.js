@@ -34,7 +34,7 @@ const GrexForm = () => {
             })
         };
 
-        fetch("http://localhost:8000/grex", postConfig).then(async function (response) {
+        fetch("http://98.223.104.91:7953/grex", postConfig).then(async function (response) {
             response = await response.json();
             let regex = response.grex;
             console.log(regex);

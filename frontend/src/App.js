@@ -233,7 +233,7 @@ let surveyJson = {
         getPlaceholder("grex2"),
         getPlaceholder("grex3")
     ],
-    completedHtml: "<h4>This concludes the study!</b>If you would like to be entered to win one of five $10 Amazon gift cards, see this survey:</b>https://purdue.ca1.qualtrics.com/jfe/form/SV_8AC0CQsRaNP3LTw</b></h4>"
+    completedHtml: "<h4>This concludes the study!</br>If you would like to be entered to win one of five $10 Amazon gift cards, see this survey:</br>https://purdue.ca1.qualtrics.com/jfe/form/SV_8AC0CQsRaNP3LTw</br></h4>"
 };
 
 // Function to add an argument to a function call (written in a string)
@@ -259,7 +259,7 @@ function surveyInitializer() {
                 'Content-Type': 'application/json'
             }
         };
-        fetch('http://localhost:8000/sequence', getConfig).then(async function(response) {
+        fetch('http://98.223.104.91:7953/sequence', getConfig).then(async function(response) {
             // Check status
             response = await response.json();
             let sequence = response.sequence;
@@ -531,7 +531,7 @@ function App(props) {
 
             if (!submitted) {
                 submitted = true;
-                fetch('http://localhost:8000/log', postConfig).then(function (response) {
+                fetch('http://98.223.104.91:7953/log', postConfig).then(function (response) {
                     // Check status
                     console.log(response);
                     options.showDataSavingSuccess();
@@ -546,7 +546,7 @@ function App(props) {
                     },
                     body: ''
                 };
-                fetch('http://localhost:8000/backup', postEmpty).then(function (response) {
+                fetch('http://98.223.104.91:7953/backup', postEmpty).then(function (response) {
                     // Check status
                     console.log(response);
                     options.showDataSavingSuccess();

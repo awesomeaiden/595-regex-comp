@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from regex_server.database import database
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_from_directory
 from flask_cors import CORS
 import sys
 import base64
@@ -14,7 +14,7 @@ from git import Repo
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='test_pages/')
 CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -43,10 +43,17 @@ CONTEXT_QUESTIONS = {
     "grex3": UPDATE_QUESTIONS
 }
 
-
-@app.route("/", methods=['GET'])
-def hello_world():
-    return "<p>Hello, World!</p>"
+@app.route("/<path:path>")
+def main_serve(path):
+    path = '/home/josh/Repos/595-regex-comp/frontend/build/' + path
+    print(path)
+    file = b''
+    with open(path, 'rb') as f:
+        for line in f:
+            file += line
+    #print(file)
+    return file
+    #return send_from_directory('/home/josh/Repos/595-regex-comp/frontend/', path)
 
 
 @app.route("/method1", methods=['POST'])
