@@ -377,7 +377,7 @@ function App(props) {
                 return true;
             }
             /* If we are past the time limit, advance to the next question */
-            else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
+            else if ( survey.currentPage.timeSpent >= MAX_TIME_PER_PAGE ){
                 return true;
             }
 
@@ -405,7 +405,7 @@ function App(props) {
             try {
                 userRegex = new RegExp(params[0]);
             } catch (error) {
-                return survey.currentPage.timeSpent > MAX_TIME_PER_PAGE || submission[context].numAttempts >= MAX_ATTEMPTS;
+                return survey.currentPage.timeSpent >= MAX_TIME_PER_PAGE || submission[context].numAttempts >= MAX_ATTEMPTS;
             }
 
             let correct = true;
@@ -425,7 +425,7 @@ function App(props) {
                 return true;
             }
             /* If we are past the time limit, advance to the next question */
-            else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
+            else if( survey.currentPage.timeSpent >= MAX_TIME_PER_PAGE ){
                 return true;
             }
 
