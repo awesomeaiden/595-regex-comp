@@ -347,7 +347,6 @@ function App(props) {
     if (survey) {
 
         function toolSelect(params: any[]): any {
-            console.log("MADE IT TO TOOLSELECT");
             // Tool to select
             let toolName = params[0];
 
@@ -366,12 +365,6 @@ function App(props) {
             let regex = new RegExp(params[1]);
             // Last param is context of question (control1, explain3 etc)
             let context = params[params.length - 1];
-
-            //TODO: Remove
-            console.log("userString: " + userString);
-            console.log(regex);
-            console.log("context: " + context);
-            console.log("timeToComplete: " + survey.currentPage.timeSpent);
 
             /* Set data for logging */
             submission[context].numAttempts += 1;
@@ -393,42 +386,32 @@ function App(props) {
         }
 
         function regexValidator(params: any[]): any {
-            // TODO If time limit is violated, don't return false - needs to allow survey to continue
             // Ensure user regex string begins with ^ and $
-
             if (params[0].charAt(0) !== '^') {
                 params[0] = "^" + params[0];
             }
             if (params[0].charAt(params[0].length - 1) !== '$') {
                 params[0] = params[0] + "$";
             }
-            // First param is user's regex
-            let userRegex;
-            try {
-                userRegex = new RegExp(params[0]);
-            } catch (error) {
-                return false;
-            }
+
             // Second param is "correct" regex to compare to
             let correctRegex = new RegExp(params[1]);
             // Rest of params (except for last param) are validation strings to check against
             let validationStrings = params.slice(2, params.length - 1);
             // Last param is context of question (control1, explain3 etc)
             let context = params[params.length - 1];
-
-            //TODO: Remove
-            console.log(userRegex);
-            console.log(correctRegex);
-            console.log(context);
-            console.log("timeToComplete: " + survey.currentPage.timeSpent);
+            // First param is user's regex
+            let userRegex;
+            try {
+                userRegex = new RegExp(params[0]);
+            } catch (error) {
+                return survey.currentPage.timeSpent > MAX_TIME_PER_PAGE || submission[context].numAttempts >= MAX_ATTEMPTS;
+            }
 
             let correct = true;
             for (let i = 0; i < validationStrings.length; i++) {
                 if (userRegex.test(validationStrings[i]) !== correctRegex.test(validationStrings[i])) {
                     correct = false;
-                    console.log(validationStrings[i]);
-                    console.log(userRegex.test(validationStrings[i]));
-                    console.log(correctRegex.test(validationStrings[i]));
                 }
             }
 
