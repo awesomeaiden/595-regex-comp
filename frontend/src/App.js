@@ -326,6 +326,9 @@ function startupSaver(params: any[]): any {
 // To help prevent duplicate submission of results
 let submitted = false;
 
+// Move participantID outside react function
+let participantID = uuidv4();
+
 // Initialize survey
 function App(props) {
 
@@ -342,7 +345,6 @@ function App(props) {
     }, []);
 
     if (survey) {
-        let participantID = uuidv4();
 
         function toolSelect(params: any[]): any {
             console.log("MADE IT TO TOOLSELECT");
