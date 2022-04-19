@@ -155,7 +155,7 @@ let surveyJson = {
                     html: "" +
                         "You are about to start a brief assessment covering the use of regular expressions with and without assistive tools. " +
                         "<br/><br/>You will have 2.5 minutes to complete each question.  The entire quiz should take around 20 minutes." +
-                        "<br/><br/>Upon completion, you will be asked for an email address to be entered into a drawing for a $50 Amazon gift card, if you so choose!" +
+                        "<br/><br/>Upon completion, you will be asked for an email address to be entered into a drawing for one of FIVE $10 Amazon gift cards, if you so choose!" +
                         "<br/><br/>The assessment will begin with a few basic questions about your existing skill and knowledge of regular expressions." +
                         "<br/><br/>Please click on <b>'Start Assessment'</b> when you are ready!"
                 }
@@ -326,6 +326,9 @@ function startupSaver(params: any[]): any {
 // To help prevent duplicate submission of results
 let submitted = false;
 
+// Move participantID outside react function
+let participantID = uuidv4();
+
 // Initialize survey
 function App(props) {
 
@@ -342,10 +345,8 @@ function App(props) {
     }, []);
 
     if (survey) {
-        let participantID = uuidv4();
 
         function toolSelect(params: any[]): any {
-            console.log("MADE IT TO TOOLSELECT");
             // Tool to select
             let toolName = params[0];
 
@@ -365,12 +366,6 @@ function App(props) {
             // Last param is context of question (control1, explain3 etc)
             let context = params[params.length - 1];
 
-            //TODO: Remove
-            console.log("userString: " + userString);
-            console.log(regex);
-            console.log("context: " + context);
-            console.log("timeToComplete: " + survey.currentPage.timeSpent);
-
             /* Set data for logging */
             submission[context].numAttempts += 1;
             submission[context].timeToComplete = survey.currentPage.timeSpent;
@@ -382,7 +377,7 @@ function App(props) {
                 return true;
             }
             /* If we are past the time limit, advance to the next question */
-            else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
+            else if ( survey.currentPage.timeSpent >= MAX_TIME_PER_PAGE ){
                 return true;
             }
 
@@ -391,42 +386,32 @@ function App(props) {
         }
 
         function regexValidator(params: any[]): any {
-            // TODO If time limit is violated, don't return false - needs to allow survey to continue
             // Ensure user regex string begins with ^ and $
-
             if (params[0].charAt(0) !== '^') {
                 params[0] = "^" + params[0];
             }
             if (params[0].charAt(params[0].length - 1) !== '$') {
                 params[0] = params[0] + "$";
             }
-            // First param is user's regex
-            let userRegex;
-            try {
-                userRegex = new RegExp(params[0]);
-            } catch (error) {
-                return false;
-            }
+
             // Second param is "correct" regex to compare to
             let correctRegex = new RegExp(params[1]);
             // Rest of params (except for last param) are validation strings to check against
             let validationStrings = params.slice(2, params.length - 1);
             // Last param is context of question (control1, explain3 etc)
             let context = params[params.length - 1];
-
-            //TODO: Remove
-            console.log(userRegex);
-            console.log(correctRegex);
-            console.log(context);
-            console.log("timeToComplete: " + survey.currentPage.timeSpent);
+            // First param is user's regex
+            let userRegex;
+            try {
+                userRegex = new RegExp(params[0]);
+            } catch (error) {
+                return survey.currentPage.timeSpent >= MAX_TIME_PER_PAGE || submission[context].numAttempts >= MAX_ATTEMPTS;
+            }
 
             let correct = true;
             for (let i = 0; i < validationStrings.length; i++) {
                 if (userRegex.test(validationStrings[i]) !== correctRegex.test(validationStrings[i])) {
                     correct = false;
-                    console.log(validationStrings[i]);
-                    console.log(userRegex.test(validationStrings[i]));
-                    console.log(correctRegex.test(validationStrings[i]));
                 }
             }
 
@@ -440,7 +425,7 @@ function App(props) {
                 return true;
             }
             /* If we are past the time limit, advance to the next question */
-            else if( survey.currentPage.timeSpent > MAX_TIME_PER_PAGE ){
+            else if( survey.currentPage.timeSpent >= MAX_TIME_PER_PAGE ){
                 return true;
             }
 
