@@ -155,7 +155,7 @@ let surveyJson = {
                     html: "" +
                         "You are about to start a brief assessment covering the use of regular expressions with and without assistive tools. " +
                         "<br/><br/>You will have 2.5 minutes to complete each question.  The entire quiz should take around 20 minutes." +
-                        "<br/><br/>Upon completion, you will be asked for an email address to be entered into a drawing for a $50 Amazon gift card, if you so choose!" +
+                        "<br/><br/>Upon completion, you will be asked for an email address to be entered into a drawing for one of FIVE $10 Amazon gift cards, if you so choose!" +
                         "<br/><br/>The assessment will begin with a few basic questions about your existing skill and knowledge of regular expressions." +
                         "<br/><br/>Please click on <b>'Start Assessment'</b> when you are ready!"
                 }
