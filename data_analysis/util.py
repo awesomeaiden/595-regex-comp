@@ -3,6 +3,14 @@ import numpy as np
 import re
 
 
+def discard_non_float_conversion_func(data_pt):
+	try:
+		data_pt = float(data_pt)
+	except ValueError:
+		data_pt = None
+
+	return data_pt
+
 def discard_non_int_conversion_func(data_pt):
 	try:
 		data_pt = int(data_pt)
