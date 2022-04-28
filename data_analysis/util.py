@@ -1,3 +1,8 @@
+import pandas
+import numpy as np
+import re
+
+
 def discard_non_int_conversion_func(data_pt):
 	try:
 		data_pt = int(data_pt)
