@@ -19,11 +19,17 @@ def discard_non_int_conversion_func(data_pt):
 
 	return data_pt
 
-def reduce_to_150_conversion_func(data_pt):
+def remove_over_150_conversion_func(data_pt):
 	data_pt = discard_non_int_conversion_func(data_pt)
 
 	if data_pt is None or data_pt >= 150:
 		return None
+	else:
+		return data_pt
+
+
+def reduce_to_150_conversion_func(data_pt):
+	data_pt = discard_non_int_conversion_func(data_pt)
 
 	data_pt = min(150, data_pt)
 
@@ -55,3 +61,11 @@ def get_rows(df, filters):
 			rows.append(row)
 
 	return rows
+
+def get_unique_ids(df):
+	ids = list()
+	for val in df['pID']:
+		if val not in ids:
+			ids.append(val)
+
+	return ids
